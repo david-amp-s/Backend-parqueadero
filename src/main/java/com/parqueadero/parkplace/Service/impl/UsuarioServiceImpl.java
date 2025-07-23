@@ -2,6 +2,7 @@ package com.parqueadero.parkplace.Service.impl;
 
 import java.util.List;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.parqueadero.parkplace.Service.UsuarioService;
@@ -21,6 +22,8 @@ import lombok.RequiredArgsConstructor;
 public class UsuarioServiceImpl implements UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
+
+    private final PasswordEncoder passwordEncoder;
 
     private Rol obtenerRol(String nombre) {
         Rol rol = rolRepository.findByNombre(nombre)
@@ -42,7 +45,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         Usuario usuario = Usuario.builder()
                 .nombre(dto.nombre())
                 .email(dto.email())
-                .contraseña(dto.contraseña())
+                .contraseña(passwordEncoder.encode(dto.contraseña()))
                 .rol(obtenerRol(dto.rolNombre()))
                 .build();
         usuarioRepository.save(usuario);
