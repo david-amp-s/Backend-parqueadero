@@ -30,5 +30,4 @@ public class AutenticationService implements UserDetailsService {
                 usuario.getContraseña(),
                 List.of(new SimpleGrantedAuthority("ROLE_" + usuario.getRol().getNombre())));
     }
-
 }
