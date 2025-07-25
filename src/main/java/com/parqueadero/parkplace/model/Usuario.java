@@ -23,8 +23,8 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "usuarios")
-@Data
 @AllArgsConstructor
+@Data
 @NoArgsConstructor
 @Builder
 public class Usuario implements UserDetails {

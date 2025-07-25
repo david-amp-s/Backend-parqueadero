@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.parqueadero.parkplace.model.Usuario;
 
 import lombok.RequiredArgsConstructor;
@@ -36,5 +37,20 @@ public class TokenService {
 
     private Instant fechaExpiracion() {
         return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-05:00"));
+    }
+
+    public String getSubject(String tokenjwt) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(jwtSecret);
+            return JWT.require(algorithm)
+
+                    .withIssuer("parkplace-backend")
+
+                    .build()
+                    .verify(tokenjwt)
+                    .getSubject();
+        } catch (JWTVerificationException exception) {
+            throw new RuntimeException("Token JWT invalido o expirado");
+        }
     }
 }
