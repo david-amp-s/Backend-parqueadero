@@ -25,9 +25,6 @@ public class AutenticationService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow(() -> new UsuarioNoEncontrado(email));
 
-        return new org.springframework.security.core.userdetails.User(
-                usuario.getEmail(),
-                usuario.getContraseña(),
-                List.of(new SimpleGrantedAuthority("ROLE_" + usuario.getRol().getNombre())));
+        return usuario;
     }
 }
