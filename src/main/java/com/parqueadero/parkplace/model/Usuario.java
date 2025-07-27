@@ -39,7 +39,7 @@ public class Usuario implements UserDetails {
     @Column(nullable = false)
     private String contraseña;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "rol_id", nullable = false)
     private Rol rol;
 
