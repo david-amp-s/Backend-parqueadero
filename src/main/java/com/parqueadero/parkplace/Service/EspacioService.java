@@ -4,7 +4,8 @@ import java.util.List;
 
 import com.parqueadero.parkplace.dto.EspacioCreateDto;
 import com.parqueadero.parkplace.dto.EspacioDto;
-import com.parqueadero.parkplace.enums.EstadoEspacio;
+
+import com.parqueadero.parkplace.enums.TipoVehiculo;
 import com.parqueadero.parkplace.model.Espacio;
 
 public interface EspacioService {
@@ -17,7 +18,7 @@ public interface EspacioService {
 
     List<Espacio> espaciosDisponiblesBicicleta();
 
-    EstadoEspacio asignarEspacio();
+    EspacioDto asignarEspacio(TipoVehiculo tipoVehiculo);
 
-    EstadoEspacio liberarEspacio();
+    public EspacioDto liberarEspacio(String codigo);
 }
