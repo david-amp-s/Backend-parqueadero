@@ -77,7 +77,7 @@ public class IngresoServiceImpl implements IngresoService {
         LocalDateTime inicio = fecha.toLocalDate().atStartOfDay();
         LocalDateTime fin = inicio.plusDays(1);
 
-        return ingresoRepository.findByFechaingresoBetween(inicio, fin).stream()
+        return ingresoRepository.findByFechaIngresoBetween(inicio, fin).stream()
                 .map(this::conversorDto)
                 .toList();
     }

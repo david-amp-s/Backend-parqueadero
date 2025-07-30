@@ -7,7 +7,7 @@ import java.util.List;
 import java.time.LocalDateTime;
 
 public interface IngresoRepository extends JpaRepository<Ingreso, Long> {
-    List<Ingreso> findByFechaingresoBetween(LocalDateTime inicio, LocalDateTime fin);
+    List<Ingreso> findByFechaIngresoBetween(LocalDateTime inicio, LocalDateTime fin);
 
     List<Ingreso> findByVehiculo_Placa(String placa);
 }
