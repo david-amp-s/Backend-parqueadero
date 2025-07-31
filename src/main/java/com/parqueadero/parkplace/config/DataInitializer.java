@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.parqueadero.parkplace.model.Rol;
 import com.parqueadero.parkplace.repository.RolRepository;
+import com.parqueadero.parkplace.repository.TarifaRepository;
 
 @Configuration
 public class DataInitializer {
@@ -21,4 +22,5 @@ public class DataInitializer {
             }
         };
     }
+
 }
