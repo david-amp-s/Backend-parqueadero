@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import com.parqueadero.parkplace.Service.TarifaService;
 import com.parqueadero.parkplace.dto.TarifaCreateDto;
 import com.parqueadero.parkplace.dto.TarifaDto;
+import com.parqueadero.parkplace.exception.TipoVehiculoNoRegistrado;
 import com.parqueadero.parkplace.model.Tarifa;
 import com.parqueadero.parkplace.repository.TarifaRepository;
 
@@ -17,7 +18,8 @@ public class TarifaServiceImpl implements TarifaService {
 
     @Override
     public TarifaDto cambiarTarifaMinuto(TarifaCreateDto dto) {
-        Tarifa tarifa = tarifaRepository.findByTipoVehiculo(dto.tipoVehiculo());
+        Tarifa tarifa = tarifaRepository.findByTipoVehiculo(dto.tipoVehiculo())
+                .orElseThrow(() -> new TipoVehiculoNoRegistrado());
         tarifa.setValorMinuto(dto.nuevaTarifa());
         tarifaRepository.save(tarifa);
         return new TarifaDto(tarifa.getId(), tarifa.getTipoVehiculo(), tarifa.getValorMinuto());
@@ -25,7 +27,8 @@ public class TarifaServiceImpl implements TarifaService {
 
     @Override
     public TarifaDto cambiarTarifaHora(TarifaCreateDto dto) {
-        Tarifa tarifa = tarifaRepository.findByTipoVehiculo(dto.tipoVehiculo());
+        Tarifa tarifa = tarifaRepository.findByTipoVehiculo(dto.tipoVehiculo())
+                .orElseThrow(() -> new TipoVehiculoNoRegistrado());
         tarifa.setValorHora(dto.nuevaTarifa());
         tarifaRepository.save(tarifa);
         return new TarifaDto(tarifa.getId(), tarifa.getTipoVehiculo(), tarifa.getValorHora());
@@ -33,7 +36,8 @@ public class TarifaServiceImpl implements TarifaService {
 
     @Override
     public TarifaDto cambiarTarifaFija(TarifaCreateDto dto) {
-        Tarifa tarifa = tarifaRepository.findByTipoVehiculo(dto.tipoVehiculo());
+        Tarifa tarifa = tarifaRepository.findByTipoVehiculo(dto.tipoVehiculo())
+                .orElseThrow(() -> new TipoVehiculoNoRegistrado());
         tarifa.setValorTarifaFija(dto.nuevaTarifa());
         tarifaRepository.save(tarifa);
         return new TarifaDto(tarifa.getId(), tarifa.getTipoVehiculo(), tarifa.getValorTarifaFija());

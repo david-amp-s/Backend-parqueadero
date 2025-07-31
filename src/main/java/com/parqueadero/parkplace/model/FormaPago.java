@@ -1,10 +1,6 @@
 package com.parqueadero.parkplace.model;
 
-import com.parqueadero.parkplace.enums.TipoVehiculo;
-
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -15,25 +11,15 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 @Entity
-@Table(name = "tarifas")
-@AllArgsConstructor
+@Table(name = "formas_pago")
 @RequiredArgsConstructor
+@AllArgsConstructor
 @Data
 @Builder
-public class Tarifa {
+public class FormaPago {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
-    @Enumerated(EnumType.STRING)
-    private TipoVehiculo tipoVehiculo;
-
-    private Integer valorHora;
-
-    private Integer valorMinuto;
-
-    private Integer valorTarifaFija;
-
-    private boolean TarifaFija;
-
+    private String descripcion;
 }

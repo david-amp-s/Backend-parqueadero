@@ -9,10 +9,16 @@ import org.springframework.stereotype.Service;
 import com.parqueadero.parkplace.Service.SalidaService;
 import com.parqueadero.parkplace.dto.SalidaCreateDto;
 import com.parqueadero.parkplace.dto.SalidaDto;
+import com.parqueadero.parkplace.enums.EstadoEspacio;
 import com.parqueadero.parkplace.enums.TipoVehiculo;
 import com.parqueadero.parkplace.exception.IngresoNoEncontrado;
+import com.parqueadero.parkplace.exception.SalidaNoEncontrada;
+import com.parqueadero.parkplace.exception.TipoVehiculoNoRegistrado;
+import com.parqueadero.parkplace.model.Espacio;
 import com.parqueadero.parkplace.model.Ingreso;
+import com.parqueadero.parkplace.model.Salida;
 import com.parqueadero.parkplace.model.Tarifa;
+import com.parqueadero.parkplace.repository.EspacioRepository;
 import com.parqueadero.parkplace.repository.IngresoRepository;
 import com.parqueadero.parkplace.repository.SalidaRepository;
 import com.parqueadero.parkplace.repository.TarifaRepository;
@@ -28,6 +34,8 @@ public class SalidaServiceImpl implements SalidaService {
 
     private final TarifaRepository tarifaRepository;
 
+    private final EspacioRepository espacioRepository;
+
     @Override
     public SalidaDto registrarSalida(SalidaCreateDto salida) {
 
@@ -38,25 +46,40 @@ public class SalidaServiceImpl implements SalidaService {
         Long minutos = duracion.toMinutes();
 
         TipoVehiculo tipoVehiculo = ingreso.getVehiculo().getTipoVehiculo();
-        Tarifa tarifa = tarifaRepository.findByTipoVehiculo(tipoVehiculo);
+        Tarifa tarifa = tarifaRepository.findByTipoVehiculo(tipoVehiculo)
+                .orElseThrow(() -> new TipoVehiculoNoRegistrado());
         int valorTotal;
         if (tarifa.isTarifaFija()) {
             valorTotal = tarifa.getValorTarifaFija();
         } else {
             valorTotal = tarifa.getValorMinuto() * minutos.intValue();
         }
+
+        Salida nuevaSalida = Salida.builder()
+                .ingreso(ingreso)
+                .fechaSalida(fechaSalida)
+                .total(valorTotal)
+                .build();
+        salidaRepository.save(nuevaSalida);
+
+        Espacio espacio = ingreso.getEspacio();
+        espacio.setTipoEspacio(EstadoEspacio.DISPONIBLE);
+        espacioRepository.save(espacio);
+        return new SalidaDto(nuevaSalida.getId(), nuevaSalida.getIngreso().getId(), fechaSalida,
+                nuevaSalida.getTotal());
+
     }
 
     @Override
     public SalidaDto obtenerSalidaPorId(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'obtenerSalidaPorId'");
+        Salida salida = salidaRepository.findById(id).orElseThrow(() -> new SalidaNoEncontrada());
+        return new SalidaDto(salida.getId(), salida.getIngreso().getId(), salida.getFechaSalida(), salida.getTotal());
     }
 
     @Override
     public List<SalidaDto> listarTodasSalidas() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'listarTodasSalidas'");
+        return salidaRepository.findAll().stream()
+                .map(s -> new SalidaDto(s.getId(), s.getIngreso().getId(), s.getFechaSalida(), s.getTotal())).toList();
     }
 
 }
