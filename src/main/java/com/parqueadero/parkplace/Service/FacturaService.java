@@ -1,5 +1,6 @@
 package com.parqueadero.parkplace.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.parqueadero.parkplace.dto.FacturaCreateDto;
@@ -12,8 +13,8 @@ public interface FacturaService {
 
     List<FacturaDto> listarTodasFacturas();
 
-    List<FacturaDto> buscarFacturasPorFecha();
+    List<FacturaDto> buscarFacturasPorFecha(LocalDate fecha);
 
-    List<FacturaDto> buscarFacturaPorUsuario();
+    List<FacturaDto> buscarFacturaPorUsuario(Long id);
 
 }

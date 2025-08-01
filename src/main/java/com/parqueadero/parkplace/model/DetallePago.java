@@ -1,33 +1,40 @@
 package com.parqueadero.parkplace.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Entity
-@Table(name = "salidas")
+@Table(name = "detalle_pago")
 @AllArgsConstructor
-@NoArgsConstructor
+@RequiredArgsConstructor
 @Data
 @Builder
-public class Salida {
+public class DetallePago {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-    private Ingreso ingreso;
-    @Column(name = "fecha_salida")
-    private LocalDateTime fechaSalida;
 
-    private Integer total;
+    @ManyToOne
+    @JoinColumn(name = "factura_id")
+    private Factura factura;
+
+    @ManyToOne
+    @JoinColumn(name = "forma_pago_id")
+    private FormaPago formaPago;
+
+    private BigDecimal monto;
+
+    private LocalDateTime fecha;
 }

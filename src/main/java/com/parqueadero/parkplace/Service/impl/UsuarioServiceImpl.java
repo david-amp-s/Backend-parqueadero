@@ -60,14 +60,14 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public UsuarioDto buscar(String correo) {
-        Usuario usuario = usuarioRepository.findByEmail(correo).orElseThrow(() -> new UsuarioNoEncontrado(correo));
+        Usuario usuario = usuarioRepository.findByEmail(correo).orElseThrow(() -> new UsuarioNoEncontrado());
         return convertirDto(usuario);
     }
 
     @Override
     public UsuarioDto modificar(String correo, UsuarioCreateDto dto) {
         Usuario usuario = usuarioRepository.findByEmail(correo)
-                .orElseThrow(() -> new UsuarioNoEncontrado(correo));
+                .orElseThrow(() -> new UsuarioNoEncontrado());
         usuario.setNombre(dto.nombre());
         usuario.setContraseña(dto.contraseña());
         usuario.setRol(obtenerRol(dto.rolNombre()));

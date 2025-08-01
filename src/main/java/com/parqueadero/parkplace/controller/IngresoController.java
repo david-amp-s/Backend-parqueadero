@@ -39,7 +39,7 @@ public class IngresoController {
         return ingresoService.ListarTodosLosIngresos();
     }
 
-    @DeleteMapping("eliminar/{id}")
+    @DeleteMapping("/eliminar/{id}")
     public void eliminarIngreso(@PathVariable Long id) {
         ingresoService.eliminarIngreso(id);
     }

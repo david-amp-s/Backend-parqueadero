@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import com.parqueadero.parkplace.Service.IngresoService;
 import com.parqueadero.parkplace.dto.IngresoCreateDto;
 import com.parqueadero.parkplace.dto.IngresoDto;
-
+import com.parqueadero.parkplace.enums.EstadoEspacio;
 import com.parqueadero.parkplace.exception.EspacioNoEncontrado;
 import com.parqueadero.parkplace.exception.IngresoNoEncontrado;
 import com.parqueadero.parkplace.exception.VehiculoNoEncontrado;
@@ -49,7 +49,8 @@ public class IngresoServiceImpl implements IngresoService {
                 .fechaIngreso(LocalDateTime.now(ZoneId.of("America/Bogota")))
                 .build();
         ingresoRepository.save(ingreso);
-
+        espacio.setTipoEspacio(EstadoEspacio.OCUPADO);
+        espacioRepository.save(espacio);
         return conversorDto(ingreso);
     }
 
