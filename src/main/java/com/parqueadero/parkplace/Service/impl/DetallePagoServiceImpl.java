@@ -1,6 +1,7 @@
 package com.parqueadero.parkplace.Service.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import com.parqueadero.parkplace.repository.DetallePagoRepository;
 import com.parqueadero.parkplace.repository.FacturaRepository;
 import com.parqueadero.parkplace.repository.FormaPagoRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -59,20 +61,60 @@ public class DetallePagoServiceImpl implements DetallePagoService {
     }
 
     @Override
+    @Transactional
     public List<DetallePagoDto> registrarVariosPagos(List<DetallePagoCreateDto> pagos) {
+        if (pagos.isEmpty()) {
+            throw new IllegalArgumentException("Debe registrar al menos un pago.");
+        }
 
+        Long facturaId = pagos.get(0).factura_id(); // asumimos que todos los pagos son de la misma factura
+        Factura factura = facturaRepository.findById(facturaId)
+                .orElseThrow(() -> new FacturaNoEncontradaException());
+
+        BigDecimal totalPrevio = detallePagoRepository.findByFacturaId(factura.getId()).stream()
+                .map(DetallePago::getMonto)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalNuevo = pagos.stream()
+                .map(DetallePagoCreateDto::monto)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalFinal = totalPrevio.add(totalNuevo);
+
+        if (totalFinal.compareTo(factura.getTotal()) > 0) {
+            throw new RuntimeException("La suma de los pagos excede el valor total de la factura.");
+        }
+
+        List<DetallePagoDto> resultado = new ArrayList<>();
+        for (DetallePagoCreateDto dto : pagos) {
+            FormaPago metodo = formaPagoRepository.findById(dto.formaPago_id())
+                    .orElseThrow(() -> new FormapagoNoEncontrada());
+
+            DetallePago nuevo = DetallePago.builder()
+                    .factura(factura)
+                    .formaPago(metodo)
+                    .monto(dto.monto())
+                    .build();
+
+            detallePagoRepository.save(nuevo);
+
+            resultado.add(conversorDto(nuevo));
+        }
+
+        return resultado;
     }
 
     @Override
     public List<DetallePagoDto> obtenerPagosPorFactura(Long facturaId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'obtenerPagosPorFactura'");
+        return detallePagoRepository.findByFacturaId(facturaId)
+                .stream().map(d -> conversorDto(d)).toList();
     }
 
     @Override
     public DetallePagoDto obtenerDetallePago(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'obtenerDetallePago'");
+        DetallePago detallePago = detallePagoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("No encontrado"));
+        return conversorDto(detallePago);
     }
 
 }
