@@ -25,96 +25,96 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class DetallePagoServiceImpl implements DetallePagoService {
-    private final DetallePagoRepository detallePagoRepository;
-    private final FacturaRepository facturaRepository;
-    private final FormaPagoRepository formaPagoRepository;
+        private final DetallePagoRepository detallePagoRepository;
+        private final FacturaRepository facturaRepository;
+        private final FormaPagoRepository formaPagoRepository;
 
-    private DetallePagoDto conversorDto(DetallePago dto) {
-        return new DetallePagoDto(dto.getId(), dto.getFactura().getId(), dto.getFormaPago().getDescripcion(),
-                dto.getMonto());
-    }
-
-    @Override
-    public DetallePagoDto registrarDetallePago(DetallePagoCreateDto dto) {
-        Factura factura = facturaRepository.findById(dto.factura_id())
-                .orElseThrow(() -> new FacturaNoEncontradaException());
-        FormaPago formaPago = formaPagoRepository.findById(dto.formaPago_id())
-                .orElseThrow(() -> new FormapagoNoEncontrada());
-
-        BigDecimal totalPagado = detallePagoRepository.findByFacturaId(dto.factura_id())
-                .stream()
-                .map(DetallePago::getMonto)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal nuevoTotal = totalPagado.add(dto.monto());
-        if (nuevoTotal.compareTo(factura.getTotal()) > 0) {
-            throw new PagoExcedidoException();
+        private DetallePagoDto conversorDto(DetallePago dto) {
+                return new DetallePagoDto(dto.getId(), dto.getFactura().getId(), dto.getFormaPago().getDescripcion(),
+                                dto.getMonto());
         }
 
-        DetallePago nuevoPago = DetallePago.builder()
-                .factura(factura)
-                .formaPago(formaPago)
-                .monto(dto.monto())
-                .build();
+        @Override
+        public DetallePagoDto registrarDetallePago(DetallePagoCreateDto dto) {
+                Factura factura = facturaRepository.findById(dto.factura_id())
+                                .orElseThrow(() -> new FacturaNoEncontradaException());
+                FormaPago formaPago = formaPagoRepository.findById(dto.formaPago_id())
+                                .orElseThrow(() -> new FormapagoNoEncontrada());
 
-        detallePagoRepository.save(nuevoPago);
-        return conversorDto(nuevoPago);
-    }
+                BigDecimal totalPagado = detallePagoRepository.findByFacturaId(dto.factura_id())
+                                .stream()
+                                .map(DetallePago::getMonto)
+                                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                BigDecimal nuevoTotal = totalPagado.add(dto.monto());
+                if (nuevoTotal.compareTo(factura.getTotal()) > 0) {
+                        throw new PagoExcedidoException();
+                }
 
-    @Override
-    @Transactional
-    public List<DetallePagoDto> registrarVariosPagos(List<DetallePagoCreateDto> pagos) {
-        if (pagos.isEmpty()) {
-            throw new IllegalArgumentException("Debe registrar al menos un pago.");
+                DetallePago nuevoPago = DetallePago.builder()
+                                .factura(factura)
+                                .formaPago(formaPago)
+                                .monto(dto.monto())
+                                .build();
+
+                detallePagoRepository.save(nuevoPago);
+                return conversorDto(nuevoPago);
         }
 
-        Long facturaId = pagos.get(0).factura_id(); // asumimos que todos los pagos son de la misma factura
-        Factura factura = facturaRepository.findById(facturaId)
-                .orElseThrow(() -> new FacturaNoEncontradaException());
+        @Override
+        @Transactional
+        public List<DetallePagoDto> registrarVariosPagos(List<DetallePagoCreateDto> pagos) {
+                if (pagos.isEmpty()) {
+                        throw new IllegalArgumentException("Debe registrar al menos un pago.");
+                }
 
-        BigDecimal totalPrevio = detallePagoRepository.findByFacturaId(factura.getId()).stream()
-                .map(DetallePago::getMonto)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                Long facturaId = pagos.get(0).factura_id(); // asumimos que todos los pagos son de la misma factura
+                Factura factura = facturaRepository.findById(facturaId)
+                                .orElseThrow(() -> new FacturaNoEncontradaException());
 
-        BigDecimal totalNuevo = pagos.stream()
-                .map(DetallePagoCreateDto::monto)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                BigDecimal totalPrevio = detallePagoRepository.findByFacturaId(factura.getId()).stream()
+                                .map(DetallePago::getMonto)
+                                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        BigDecimal totalFinal = totalPrevio.add(totalNuevo);
+                BigDecimal totalNuevo = pagos.stream()
+                                .map(DetallePagoCreateDto::monto)
+                                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        if (totalFinal.compareTo(factura.getTotal()) > 0) {
-            throw new RuntimeException("La suma de los pagos excede el valor total de la factura.");
+                BigDecimal totalFinal = totalPrevio.add(totalNuevo);
+
+                if (totalFinal.compareTo(factura.getTotal()) > 0) {
+                        throw new RuntimeException("La suma de los pagos excede el valor total de la factura.");
+                }
+
+                List<DetallePagoDto> resultado = new ArrayList<>();
+                for (DetallePagoCreateDto dto : pagos) {
+                        FormaPago metodo = formaPagoRepository.findById(dto.formaPago_id())
+                                        .orElseThrow(() -> new FormapagoNoEncontrada());
+
+                        DetallePago nuevo = DetallePago.builder()
+                                        .factura(factura)
+                                        .formaPago(metodo)
+                                        .monto(dto.monto())
+                                        .build();
+
+                        detallePagoRepository.save(nuevo);
+
+                        resultado.add(conversorDto(nuevo));
+                }
+
+                return resultado;
         }
 
-        List<DetallePagoDto> resultado = new ArrayList<>();
-        for (DetallePagoCreateDto dto : pagos) {
-            FormaPago metodo = formaPagoRepository.findById(dto.formaPago_id())
-                    .orElseThrow(() -> new FormapagoNoEncontrada());
-
-            DetallePago nuevo = DetallePago.builder()
-                    .factura(factura)
-                    .formaPago(metodo)
-                    .monto(dto.monto())
-                    .build();
-
-            detallePagoRepository.save(nuevo);
-
-            resultado.add(conversorDto(nuevo));
+        @Override
+        public List<DetallePagoDto> obtenerPagosPorFactura(Long facturaId) {
+                return detallePagoRepository.findByFacturaId(facturaId)
+                                .stream().map(d -> conversorDto(d)).toList();
         }
 
-        return resultado;
-    }
-
-    @Override
-    public List<DetallePagoDto> obtenerPagosPorFactura(Long facturaId) {
-        return detallePagoRepository.findByFacturaId(facturaId)
-                .stream().map(d -> conversorDto(d)).toList();
-    }
-
-    @Override
-    public DetallePagoDto obtenerDetallePago(Long id) {
-        DetallePago detallePago = detallePagoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("No encontrado"));
-        return conversorDto(detallePago);
-    }
+        @Override
+        public DetallePagoDto obtenerDetallePago(Long id) {
+                DetallePago detallePago = detallePagoRepository.findById(id)
+                                .orElseThrow(() -> new RuntimeException("No encontrado"));
+                return conversorDto(detallePago);
+        }
 
 }
