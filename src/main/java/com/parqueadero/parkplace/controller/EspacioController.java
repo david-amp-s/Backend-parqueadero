@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
-@RequestMapping("/api/espacio")
+@RequestMapping("/api/espacios")
 @RequiredArgsConstructor
 public class EspacioController {
     private final EspacioService espacioService;
@@ -46,7 +46,7 @@ public class EspacioController {
         return espacioService.espaciosDisponiblesBicicleta();
     }
 
-    @PostMapping("/asignar")
+    @PutMapping("/asignar")
     EspacioDto asignarEspacio(@RequestBody TipoVehiculo tipoVehiculo) {
 
         return espacioService.asignarEspacio(tipoVehiculo);

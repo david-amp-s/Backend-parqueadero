@@ -5,12 +5,15 @@ import com.parqueadero.parkplace.enums.TipoVehiculo;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 public record EspacioCreateDto(
-                @NotBlank(message = "No puede ser un dato en blanco") String codigo,
-                @NotNull(message = "Tiene que tener un tipo de estado") EstadoEspacio tipoEspacio,
-                @NotNull(message = "Debe de registrar un tipo de vehiculo") TipoVehiculo tipoVehiculoPermitido
+
+        @NotBlank(message = "El código no puede estar vacío") @Size(max = 10, message = "El código no puede tener más de 10 caracteres") String codigo,
+
+        @NotNull(message = "Debe especificar el estado del espacio") EstadoEspacio tipoEspacio,
+
+        @NotNull(message = "Debe especificar el tipo de vehículo permitido") TipoVehiculo tipoVehiculoPermitido
 
 ) {
-
 }

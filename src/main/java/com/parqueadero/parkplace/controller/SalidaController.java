@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
-@RequestMapping("/api/salida")
+@RequestMapping("/api/salidas")
 @RequiredArgsConstructor
 public class SalidaController {
     private final SalidaService salidaService;

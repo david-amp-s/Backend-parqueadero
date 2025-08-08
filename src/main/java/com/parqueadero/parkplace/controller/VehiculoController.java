@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
-@RequestMapping("/api/vehiculo")
+@RequestMapping("/api/vehiculos")
 @RequiredArgsConstructor
 public class VehiculoController {
     final private VehiculoService vehiculoService;

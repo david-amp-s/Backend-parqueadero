@@ -7,6 +7,7 @@ import com.parqueadero.parkplace.Service.IngresoService;
 import com.parqueadero.parkplace.dto.IngresoCreateDto;
 import com.parqueadero.parkplace.dto.IngresoDto;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,7 +26,7 @@ public class IngresoController {
     private final IngresoService ingresoService;
 
     @PostMapping()
-    public IngresoDto registrarIngreso(@RequestBody IngresoCreateDto dto) {
+    public IngresoDto registrarIngreso(@RequestBody @Valid IngresoCreateDto dto) {
         return ingresoService.registrarIngreso(dto);
     }
 

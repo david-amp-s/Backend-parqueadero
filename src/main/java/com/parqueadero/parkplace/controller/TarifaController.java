@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@RequestMapping("/api/tarifa")
+@RequestMapping("/api/tarifas")
 @RequiredArgsConstructor
 public class TarifaController {
 

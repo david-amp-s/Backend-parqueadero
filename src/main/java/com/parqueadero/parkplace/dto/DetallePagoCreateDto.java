@@ -1,11 +1,16 @@
 package com.parqueadero.parkplace.dto;
 
 import java.math.BigDecimal;
-
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 public record DetallePagoCreateDto(
-        @NotNull(message = "Debe especificar la factura") Long factura_id,
-        @NotNull(message = "Debe especificar el método de pago") Long formaPago_id,
-        @NotNull(message = "Debe ingresar el monto pagado") BigDecimal monto) {
+
+                @NotNull(message = "Debe especificar la factura") Long factura_id,
+
+                @NotNull(message = "Debe especificar el método de pago") Long formaPago_id,
+
+                @NotNull(message = "Debe ingresar el monto pagado") @Positive(message = "El monto pagado debe ser mayor que cero") BigDecimal monto
+
+) {
 }

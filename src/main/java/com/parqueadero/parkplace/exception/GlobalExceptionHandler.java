@@ -1,0 +1,56 @@
+package com.parqueadero.parkplace.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+        @ExceptionHandler(MethodArgumentNotValidException.class)
+        public ResponseEntity<Map<String, Object>> handleValidationErrors(MethodArgumentNotValidException ex) {
+                Map<String, Object> respuesta = new HashMap<>();
+                respuesta.put("status", HttpStatus.BAD_REQUEST.value());
+                respuesta.put("error", "Validación fallida");
+
+                Map<String, String> detalles = new HashMap<>();
+                ex.getBindingResult().getFieldErrors()
+                                .forEach(error -> detalles.put(error.getField(), error.getDefaultMessage()));
+                respuesta.put("detalles", detalles);
+
+                return ResponseEntity.badRequest().body(respuesta);
+        }
+
+        @ExceptionHandler({
+                        ClienteNoEncontradoException.class,
+                        EspacioNoEncontrado.class,
+                        FacturaNoEncontradaException.class,
+                        FormapagoNoEncontrada.class,
+                        IngresoNoEncontrado.class,
+                        PagoExcedidoException.class,
+                        RolNoEncontrado.class,
+                        SalidaNoEncontrada.class,
+                        TipoVehiculoNoRegistrado.class,
+                        UsuarioNoEncontrado.class,
+                        VehiculoNoEncontrado.class
+        })
+        public ResponseEntity<Map<String, Object>> handleNotFound(RuntimeException ex) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                .body(Map.of(
+                                                "status", HttpStatus.NOT_FOUND.value(),
+                                                "error", ex.getMessage()));
+        }
+
+        @ExceptionHandler(Exception.class)
+        public ResponseEntity<Map<String, Object>> handleGeneralError(Exception ex) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body(Map.of(
+                                                "status", HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                                                "error", "Error interno en el servidor"));
+        }
+}

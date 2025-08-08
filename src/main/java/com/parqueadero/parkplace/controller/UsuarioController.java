@@ -9,6 +9,7 @@ import com.parqueadero.parkplace.Service.UsuarioService;
 import com.parqueadero.parkplace.dto.UsuarioCreateDto;
 import com.parqueadero.parkplace.dto.UsuarioDto;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -23,7 +24,7 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
 
     @PostMapping
-    public UsuarioDto crear(@RequestBody UsuarioCreateDto dto) {
+    public UsuarioDto crear(@RequestBody @Valid UsuarioCreateDto dto) {
         return usuarioService.crear(dto);
     }
 
@@ -33,7 +34,7 @@ public class UsuarioController {
     }
 
     @PutMapping("/{correo}")
-    public UsuarioDto modificar(@PathVariable String correo, @RequestBody UsuarioCreateDto dto) {
+    public UsuarioDto modificar(@PathVariable String correo, @RequestBody @Valid UsuarioCreateDto dto) {
         return usuarioService.modificar(correo, dto);
     }
 

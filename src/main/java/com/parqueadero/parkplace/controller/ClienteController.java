@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
-@RequestMapping("/api/cliente")
+@RequestMapping("/api/clientes")
 @RequiredArgsConstructor
 public class ClienteController {
     private final ClienteService clienteService;
@@ -40,7 +40,7 @@ public class ClienteController {
     }
 
     @PutMapping("/{cedula}")
-    public ClienteDto actualizar(@PathVariable String cedula, @RequestBody ClienteCreateDto dto) {
+    public ClienteDto actualizar(@PathVariable String cedula, @RequestBody @Valid ClienteCreateDto dto) {
         return clienteService.actualizar(cedula, dto);
     }
 
