@@ -29,11 +29,23 @@ public class SecurityConfig {
         return http.csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(rq -> {
-                    // rq.requestMatchers(HttpMethod.POST, "/login").permitAll();
-                    // rq.anyRequest().authenticated();
-                    rq.anyRequest().permitAll();
+                    rq.requestMatchers(HttpMethod.POST, "/login").permitAll();
+                    rq.requestMatchers("/api/clientes/**").hasAnyRole("ADMIN", "EMPLEADO");
+                    rq.requestMatchers("/api/usuarios/**").hasAnyRole("ADMIN");
+                    rq.requestMatchers("/api/vehiculos/**").hasAnyRole("ADMIN", "EMPLEADO");
+                    rq.requestMatchers(HttpMethod.POST, "/api/espacios").hasAnyRole("ADMIN");
+                    rq.requestMatchers("/api/espacios/**").hasAnyRole("ADMIN", "EMPLEADO");
+                    rq.requestMatchers("/api/tarifas/**").hasAnyRole("ADMIN");
+                    rq.requestMatchers(HttpMethod.DELETE, "/api/ingresos/**").hasAnyRole("ADMIN");
+                    rq.requestMatchers("/api/ingresos/**").hasAnyRole("ADMIN", "EMPLEADO");
+                    rq.requestMatchers("/api/salidas/**").hasAnyRole("ADMIN", "EMPLEADO");
+                    rq.requestMatchers("/api/formas_pago/**").hasAnyRole("ADMIN");
+                    rq.requestMatchers("/api/detalle_pagos/**").hasAnyRole("ADMIN", "EMPLEADO");
+                    rq.requestMatchers("/api/facturas/**").hasAnyRole("ADMIN", "EMPLEADO");
+                    rq.anyRequest().authenticated();
+
                 })
-                // .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

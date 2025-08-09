@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
-@RequestMapping("/api/factura")
+@RequestMapping("/api/facturas")
 @RequiredArgsConstructor
 public class FacturaController {
     private final FacturaService facturaService;

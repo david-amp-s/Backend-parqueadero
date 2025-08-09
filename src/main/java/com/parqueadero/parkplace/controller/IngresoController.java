@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
-@RequestMapping("/api/ingreso")
+@RequestMapping("/api/ingresos")
 @RequiredArgsConstructor
 public class IngresoController {
     private final IngresoService ingresoService;
