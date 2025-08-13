@@ -20,4 +20,6 @@ public interface EspacioRepository extends JpaRepository<Espacio, Long> {
 
         Optional<Espacio> findByCodigo(String codigo);
 
+        Integer countByTipoEspacio(EstadoEspacio tipoEspacio);
+
 }
