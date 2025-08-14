@@ -12,7 +12,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 import com.parqueadero.parkplace.security.filter.SecurityFilter;
 
 import lombok.RequiredArgsConstructor;
@@ -26,10 +25,14 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf(csrf -> csrf.disable())
+        return http
+                .cors(cors -> {
+                })
+                .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(rq -> {
                     rq.requestMatchers(HttpMethod.POST, "/login").permitAll();
+                    rq.requestMatchers("/api/dashboard-admin").permitAll();
                     rq.requestMatchers("/api/clientes/**").hasAnyRole("ADMIN", "EMPLEADO");
                     rq.requestMatchers("/api/usuarios/**").hasAnyRole("ADMIN");
                     rq.requestMatchers("/api/vehiculos/**").hasAnyRole("ADMIN", "EMPLEADO");
