@@ -32,7 +32,7 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(rq -> {
                     rq.requestMatchers(HttpMethod.POST, "/login").permitAll();
-                    rq.requestMatchers("/api/dashboard-admin").permitAll();
+                    rq.requestMatchers("/api/dashboard-admin").hasAnyRole("ADMIN");
                     rq.requestMatchers("/api/clientes/**").hasAnyRole("ADMIN", "EMPLEADO");
                     rq.requestMatchers("/api/usuarios/**").hasAnyRole("ADMIN");
                     rq.requestMatchers("/api/vehiculos/**").hasAnyRole("ADMIN", "EMPLEADO");

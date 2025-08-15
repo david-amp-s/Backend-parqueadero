@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.parqueadero.parkplace.model.Usuario;
 import com.parqueadero.parkplace.security.dto.AuthDto;
-import com.parqueadero.parkplace.security.dto.TokenJwtDto;
+import com.parqueadero.parkplace.security.dto.RespuestaLoginDto;
 import com.parqueadero.parkplace.security.service.TokenService;
 
 import jakarta.validation.Valid;
@@ -29,8 +29,9 @@ public class AuthController {
         var authenticationToken = new UsernamePasswordAuthenticationToken(datos.email(), datos.contraseña());
         var autenticacion = manager.authenticate(authenticationToken);
 
+        var usuario = (Usuario) autenticacion.getPrincipal();
         var tokenJwt = tokenService.generarToken((Usuario) autenticacion.getPrincipal());
-        return ResponseEntity.ok(new TokenJwtDto(tokenJwt));
+        return ResponseEntity.ok(new RespuestaLoginDto(tokenJwt, usuario.getId(), usuario.getRol().getNombre()));
     }
 
 }
