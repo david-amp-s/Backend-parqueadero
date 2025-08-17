@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -39,4 +41,9 @@ public class SalidaController {
         return salidaService.listarTodasSalidas();
     }
 
+    @DeleteMapping("/{placa}")
+    public ResponseEntity<Void> cancelarSalida(@PathVariable String placa) {
+        salidaService.cancelarSalida(placa);
+        return ResponseEntity.noContent().build();
+    }
 }

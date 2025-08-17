@@ -102,7 +102,7 @@ public class DataInitializer {
                             .build();
                     espacioRepository.save(espacio);
                 }
-                ;
+
                 for (Integer i = 0; i <= espacios; i++) {
                     Espacio espacio = Espacio.builder()
                             .codigo("B" + i)

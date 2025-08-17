@@ -8,6 +8,7 @@ import com.parqueadero.parkplace.Service.VehiculoService;
 import com.parqueadero.parkplace.dto.ClienteResponsiveDto;
 import com.parqueadero.parkplace.dto.VehiculoCreateDto;
 import com.parqueadero.parkplace.dto.VehiculoDto;
+import com.parqueadero.parkplace.exception.ClienteNoEncontradoException;
 import com.parqueadero.parkplace.exception.VehiculoNoEncontrado;
 import com.parqueadero.parkplace.model.Cliente;
 import com.parqueadero.parkplace.model.Vehiculo;
@@ -36,8 +37,8 @@ public class VehiculoServiceImpl implements VehiculoService {
 
         @Override
         public VehiculoDto crear(VehiculoCreateDto dto) {
-                Cliente cliente = clienteRepository.findById(dto.cliente_id())
-                                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+                Cliente cliente = clienteRepository.findByCedula(dto.cedula())
+                                .orElseThrow(() -> new ClienteNoEncontradoException(dto.cedula()));
                 Vehiculo vehiculo = Vehiculo.builder()
                                 .placa(dto.placa())
                                 .tipoVehiculo(dto.tipoVehiculo())
@@ -68,7 +69,7 @@ public class VehiculoServiceImpl implements VehiculoService {
         public VehiculoDto corregirVehiculo(String placa, VehiculoCreateDto dto) {
                 Vehiculo vehiculo = vehiculoRepository.findByPlaca(placa)
                                 .orElseThrow(() -> new VehiculoNoEncontrado());
-                Cliente cliente = clienteRepository.findById(dto.cliente_id())
+                Cliente cliente = clienteRepository.findByCedula(dto.cedula())
                                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
                 vehiculo.setPlaca(dto.placa());
                 vehiculo.setTipoVehiculo(dto.tipoVehiculo());

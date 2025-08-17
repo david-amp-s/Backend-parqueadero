@@ -12,4 +12,5 @@ public interface SalidaService {
 
     List<SalidaDto> listarTodasSalidas();
 
+    void cancelarSalida(String placa);
 }

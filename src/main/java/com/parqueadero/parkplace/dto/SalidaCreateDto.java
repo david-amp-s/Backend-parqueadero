@@ -1,11 +1,10 @@
 package com.parqueadero.parkplace.dto;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.NotBlank;
 
 public record SalidaCreateDto(
 
-                @NotNull(message = "Debe ingresar el id del ingreso") @Positive(message = "El id del ingreso debe ser un número positivo") Long ingreso_id
+        @NotBlank(message = "La placa no puede estar vacia") String placa
 
 ) {
 }

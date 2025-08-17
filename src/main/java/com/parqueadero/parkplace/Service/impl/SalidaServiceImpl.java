@@ -14,15 +14,19 @@ import com.parqueadero.parkplace.enums.TipoVehiculo;
 import com.parqueadero.parkplace.exception.IngresoNoEncontrado;
 import com.parqueadero.parkplace.exception.SalidaNoEncontrada;
 import com.parqueadero.parkplace.exception.TipoVehiculoNoRegistrado;
+import com.parqueadero.parkplace.exception.VehiculoNoEncontrado;
 import com.parqueadero.parkplace.model.Espacio;
 import com.parqueadero.parkplace.model.Ingreso;
 import com.parqueadero.parkplace.model.Salida;
 import com.parqueadero.parkplace.model.Tarifa;
+import com.parqueadero.parkplace.model.Vehiculo;
 import com.parqueadero.parkplace.repository.EspacioRepository;
 import com.parqueadero.parkplace.repository.IngresoRepository;
 import com.parqueadero.parkplace.repository.SalidaRepository;
 import com.parqueadero.parkplace.repository.TarifaRepository;
+import com.parqueadero.parkplace.repository.VehiculoRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -36,10 +40,20 @@ public class SalidaServiceImpl implements SalidaService {
 
     private final EspacioRepository espacioRepository;
 
+    private final VehiculoRepository vehiculoRepository;
+
     @Override
     public SalidaDto registrarSalida(SalidaCreateDto salida) {
 
-        Ingreso ingreso = ingresoRepository.findById(salida.ingreso_id()).orElseThrow(() -> new IngresoNoEncontrado());
+        Vehiculo vehiculo = vehiculoRepository.findByPlaca(salida.placa())
+                .orElseThrow(() -> new VehiculoNoEncontrado());
+
+        if (vehiculo.getIngreso() == false) {
+            throw new RuntimeException("Vehiculo no ingresado");
+        }
+
+        Ingreso ingreso = ingresoRepository.findFirstByVehiculoOrderByFechaIngresoDesc(vehiculo)
+                .orElseThrow(() -> new IngresoNoEncontrado());
 
         LocalDateTime fechaSalida = LocalDateTime.now();
         Duration duracion = Duration.between(ingreso.getFechaIngreso(), fechaSalida);
@@ -65,6 +79,8 @@ public class SalidaServiceImpl implements SalidaService {
         Espacio espacio = ingreso.getEspacio();
         espacio.setTipoEspacio(EstadoEspacio.DISPONIBLE);
         espacioRepository.save(espacio);
+        vehiculo.setIngreso(false);
+        vehiculoRepository.save(vehiculo);
         return new SalidaDto(nuevaSalida.getId(), nuevaSalida.getIngreso().getId(), fechaSalida,
                 nuevaSalida.getTotal());
 
@@ -80,6 +96,17 @@ public class SalidaServiceImpl implements SalidaService {
     public List<SalidaDto> listarTodasSalidas() {
         return salidaRepository.findAll().stream()
                 .map(s -> new SalidaDto(s.getId(), s.getIngreso().getId(), s.getFechaSalida(), s.getTotal())).toList();
+    }
+
+    @Override
+    @Transactional
+    public void cancelarSalida(String placa) {
+        Vehiculo vehiculo = vehiculoRepository.findByPlaca(placa).orElseThrow(() -> new VehiculoNoEncontrado());
+        Ingreso ingreso = ingresoRepository.findFirstByVehiculoOrderByFechaIngresoDesc(vehiculo)
+                .orElseThrow(() -> new IngresoNoEncontrado());
+        vehiculo.setIngreso(true);
+        vehiculoRepository.save(vehiculo);
+        salidaRepository.deleteByIngreso(ingreso);
     }
 
 }
