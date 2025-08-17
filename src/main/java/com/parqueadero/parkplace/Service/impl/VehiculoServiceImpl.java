@@ -42,6 +42,7 @@ public class VehiculoServiceImpl implements VehiculoService {
                                 .placa(dto.placa())
                                 .tipoVehiculo(dto.tipoVehiculo())
                                 .cliente(cliente)
+                                .ingreso(false)
                                 .build();
                 vehiculoRepository.save(vehiculo);
                 return convertirVehiculoDto(vehiculo);

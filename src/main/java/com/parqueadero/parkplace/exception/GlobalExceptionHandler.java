@@ -6,6 +6,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.parqueadero.parkplace.Service.impl.EspaciosDisponiblesNoEncontradosException;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,8 +39,11 @@ public class GlobalExceptionHandler {
                         SalidaNoEncontrada.class,
                         TipoVehiculoNoRegistrado.class,
                         UsuarioNoEncontrado.class,
-                        VehiculoNoEncontrado.class
+                        VehiculoNoEncontrado.class,
+                        EspaciosDisponiblesNoEncontradosException.class,
+                        VehiculoIngresadoException.class
         })
+
         public ResponseEntity<Map<String, Object>> handleNotFound(RuntimeException ex) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                                 .body(Map.of(

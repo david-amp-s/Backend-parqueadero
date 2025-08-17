@@ -38,4 +38,6 @@ public class Vehiculo {
     @ManyToOne
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
+
+    private Boolean ingreso;
 }

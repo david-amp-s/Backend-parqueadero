@@ -12,6 +12,7 @@ import com.parqueadero.parkplace.dto.IngresoDto;
 import com.parqueadero.parkplace.enums.EstadoEspacio;
 import com.parqueadero.parkplace.exception.EspacioNoEncontrado;
 import com.parqueadero.parkplace.exception.IngresoNoEncontrado;
+import com.parqueadero.parkplace.exception.VehiculoIngresadoException;
 import com.parqueadero.parkplace.exception.VehiculoNoEncontrado;
 import com.parqueadero.parkplace.model.Espacio;
 import com.parqueadero.parkplace.model.Ingreso;
@@ -39,10 +40,15 @@ public class IngresoServiceImpl implements IngresoService {
 
     @Override
     public IngresoDto registrarIngreso(IngresoCreateDto dto) {
-        Vehiculo vehiculo = vehiculoRepository.findById(dto.vehiculo_id())
+        Vehiculo vehiculo = vehiculoRepository.findByPlaca(dto.placa())
                 .orElseThrow(() -> new VehiculoNoEncontrado());
-        Espacio espacio = espacioRepository.findById(dto.espacio_id()).orElseThrow(() -> new EspacioNoEncontrado());
+        Espacio espacio = espacioRepository.findFirstByTipoEspacioAndTipoVehiculoPermitidoOrderByIdAsc(
+                EstadoEspacio.DISPONIBLE, vehiculo.getTipoVehiculo())
+                .orElseThrow(() -> new EspaciosDisponiblesNoEncontradosException());
 
+        if (vehiculo.getIngreso()) {
+            throw new VehiculoIngresadoException();
+        }
         Ingreso ingreso = Ingreso.builder()
                 .vehiculo(vehiculo)
                 .espacio(espacio)
@@ -51,6 +57,8 @@ public class IngresoServiceImpl implements IngresoService {
         ingresoRepository.save(ingreso);
         espacio.setTipoEspacio(EstadoEspacio.OCUPADO);
         espacioRepository.save(espacio);
+        vehiculo.setIngreso(true);
+        vehiculoRepository.save(vehiculo);
         return conversorDto(ingreso);
     }
 
