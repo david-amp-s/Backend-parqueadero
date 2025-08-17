@@ -80,6 +80,7 @@ public class SalidaServiceImpl implements SalidaService {
         espacio.setTipoEspacio(EstadoEspacio.DISPONIBLE);
         espacioRepository.save(espacio);
         vehiculo.setIngreso(false);
+        vehiculo.setSalida(true);
         vehiculoRepository.save(vehiculo);
         return new SalidaDto(nuevaSalida.getId(), nuevaSalida.getIngreso().getId(), fechaSalida,
                 nuevaSalida.getTotal());
@@ -105,7 +106,11 @@ public class SalidaServiceImpl implements SalidaService {
         Ingreso ingreso = ingresoRepository.findFirstByVehiculoOrderByFechaIngresoDesc(vehiculo)
                 .orElseThrow(() -> new IngresoNoEncontrado());
         vehiculo.setIngreso(true);
+        vehiculo.setSalida(false);
         vehiculoRepository.save(vehiculo);
+        Espacio espacio = ingreso.getEspacio();
+        espacio.setTipoEspacio(EstadoEspacio.OCUPADO);
+        espacioRepository.save(espacio);
         salidaRepository.deleteByIngreso(ingreso);
     }
 

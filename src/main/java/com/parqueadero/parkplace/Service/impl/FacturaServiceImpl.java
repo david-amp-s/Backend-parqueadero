@@ -13,18 +13,25 @@ import com.parqueadero.parkplace.dto.DetallePagoInput;
 import com.parqueadero.parkplace.dto.FacturaCreateDto;
 import com.parqueadero.parkplace.dto.FacturaDto;
 import com.parqueadero.parkplace.exception.FacturaNoEncontradaException;
+import com.parqueadero.parkplace.exception.IngresoNoEncontrado;
 import com.parqueadero.parkplace.exception.SalidaNoEncontrada;
 import com.parqueadero.parkplace.exception.UsuarioNoEncontrado;
+import com.parqueadero.parkplace.exception.VehiculoNoEncontrado;
+import com.parqueadero.parkplace.exception.VehiculoSinSalidaException;
 import com.parqueadero.parkplace.model.DetallePago;
 import com.parqueadero.parkplace.model.Factura;
 import com.parqueadero.parkplace.model.FormaPago;
+import com.parqueadero.parkplace.model.Ingreso;
 import com.parqueadero.parkplace.model.Salida;
 import com.parqueadero.parkplace.model.Usuario;
+import com.parqueadero.parkplace.model.Vehiculo;
 import com.parqueadero.parkplace.repository.DetallePagoRepository;
 import com.parqueadero.parkplace.repository.FacturaRepository;
 import com.parqueadero.parkplace.repository.FormaPagoRepository;
+import com.parqueadero.parkplace.repository.IngresoRepository;
 import com.parqueadero.parkplace.repository.SalidaRepository;
 import com.parqueadero.parkplace.repository.UsuarioRepository;
+import com.parqueadero.parkplace.repository.VehiculoRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +45,8 @@ public class FacturaServiceImpl implements FacturaService {
     private final UsuarioRepository usuarioRepository;
     private final DetallePagoRepository detallePagoRepository;
     private final FormaPagoRepository formaPagoRepository;
+    private final VehiculoRepository vehiculoRepository;
+    private final IngresoRepository ingresoRepository;
 
     private List<DetallePagoInput> convrDetallePago(List<DetallePago> dto) {
         return dto.stream().map(d -> new DetallePagoInput(d.getId(), d.getMonto()))
@@ -52,7 +61,16 @@ public class FacturaServiceImpl implements FacturaService {
     @Override
     @Transactional
     public FacturaDto generarFactura(FacturaCreateDto dto) {
-        Salida salida = salidaRepository.findById(dto.salida_id()).orElseThrow(() -> new SalidaNoEncontrada());
+        Vehiculo vehiculo = vehiculoRepository.findByPlaca(dto.placa()).orElseThrow(() -> new VehiculoNoEncontrado());
+
+        if (vehiculo.getSalida() == false) {
+            throw new VehiculoSinSalidaException();
+        }
+        Ingreso ingreso = ingresoRepository.findFirstByVehiculoOrderByFechaIngresoDesc(vehiculo)
+                .orElseThrow(() -> new IngresoNoEncontrado());
+        Salida salida = salidaRepository.findTopByIngresoOrderByFechaSalidaDesc(ingreso)
+                .orElseThrow(() -> new SalidaNoEncontrada());
+
         Usuario usuario = usuarioRepository.findById(dto.usuario_id()).orElseThrow(() -> new UsuarioNoEncontrado());
         BigDecimal total = new BigDecimal(salida.getTotal());
 
@@ -85,6 +103,8 @@ public class FacturaServiceImpl implements FacturaService {
 
         factura.setPagos(pagos);
 
+        vehiculo.setSalida(false);
+        vehiculoRepository.save(vehiculo);
         return converDto(factura);
     }
 

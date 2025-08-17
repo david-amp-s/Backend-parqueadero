@@ -41,7 +41,9 @@ public class GlobalExceptionHandler {
                         UsuarioNoEncontrado.class,
                         VehiculoNoEncontrado.class,
                         EspaciosDisponiblesNoEncontradosException.class,
-                        VehiculoIngresadoException.class
+                        VehiculoIngresadoException.class,
+                        VehiculoConSalidaPendienteException.class,
+                        VehiculoSinSalidaException.class
         })
 
         public ResponseEntity<Map<String, Object>> handleNotFound(RuntimeException ex) {

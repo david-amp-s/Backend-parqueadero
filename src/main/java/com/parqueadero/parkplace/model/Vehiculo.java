@@ -40,4 +40,6 @@ public class Vehiculo {
     private Cliente cliente;
 
     private Boolean ingreso;
+
+    private Boolean salida;
 }

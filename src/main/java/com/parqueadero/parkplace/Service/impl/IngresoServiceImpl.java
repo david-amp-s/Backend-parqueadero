@@ -12,6 +12,7 @@ import com.parqueadero.parkplace.dto.IngresoDto;
 import com.parqueadero.parkplace.enums.EstadoEspacio;
 import com.parqueadero.parkplace.exception.EspacioNoEncontrado;
 import com.parqueadero.parkplace.exception.IngresoNoEncontrado;
+import com.parqueadero.parkplace.exception.VehiculoConSalidaPendienteException;
 import com.parqueadero.parkplace.exception.VehiculoIngresadoException;
 import com.parqueadero.parkplace.exception.VehiculoNoEncontrado;
 import com.parqueadero.parkplace.model.Espacio;
@@ -48,6 +49,10 @@ public class IngresoServiceImpl implements IngresoService {
 
         if (vehiculo.getIngreso()) {
             throw new VehiculoIngresadoException();
+        }
+
+        if (vehiculo.getSalida()) {
+            throw new VehiculoConSalidaPendienteException();
         }
         Ingreso ingreso = Ingreso.builder()
                 .vehiculo(vehiculo)
