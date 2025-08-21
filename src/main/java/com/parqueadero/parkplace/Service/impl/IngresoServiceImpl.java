@@ -35,7 +35,8 @@ public class IngresoServiceImpl implements IngresoService {
     private final EspacioRepository espacioRepository;
 
     private IngresoDto conversorDto(Ingreso ingreso) {
-        return new IngresoDto(ingreso.getId(), ingreso.getVehiculo().getId(), ingreso.getEspacio().getId(),
+        return new IngresoDto(ingreso.getId(), ingreso.getVehiculo().getPlaca(),
+                ingreso.getVehiculo().getTipoVehiculo().name(), ingreso.getEspacio().getCodigo(),
                 ingreso.getFechaIngreso());
     }
 
