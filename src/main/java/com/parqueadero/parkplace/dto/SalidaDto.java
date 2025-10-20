@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public record SalidaDto(
         Long id,
-        Long ingreso_id,
+        LocalDateTime ingreso_Id,
         LocalDateTime fechaSalida,
         int total) {
 

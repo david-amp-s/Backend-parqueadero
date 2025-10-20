@@ -82,7 +82,7 @@ public class SalidaServiceImpl implements SalidaService {
         vehiculo.setIngreso(false);
         vehiculo.setSalida(true);
         vehiculoRepository.save(vehiculo);
-        return new SalidaDto(nuevaSalida.getId(), nuevaSalida.getIngreso().getId(), fechaSalida,
+        return new SalidaDto(nuevaSalida.getId(), nuevaSalida.getIngreso().getFechaIngreso(), fechaSalida,
                 nuevaSalida.getTotal());
 
     }
@@ -90,13 +90,15 @@ public class SalidaServiceImpl implements SalidaService {
     @Override
     public SalidaDto obtenerSalidaPorId(Long id) {
         Salida salida = salidaRepository.findById(id).orElseThrow(() -> new SalidaNoEncontrada());
-        return new SalidaDto(salida.getId(), salida.getIngreso().getId(), salida.getFechaSalida(), salida.getTotal());
+        return new SalidaDto(salida.getId(), salida.getIngreso().getFechaIngreso(), salida.getFechaSalida(),
+                salida.getTotal());
     }
 
     @Override
     public List<SalidaDto> listarTodasSalidas() {
         return salidaRepository.findAll().stream()
-                .map(s -> new SalidaDto(s.getId(), s.getIngreso().getId(), s.getFechaSalida(), s.getTotal())).toList();
+                .map(s -> new SalidaDto(s.getId(), s.getIngreso().getFechaIngreso(), s.getFechaSalida(), s.getTotal()))
+                .toList();
     }
 
     @Override
