@@ -59,6 +59,14 @@ public class VehiculoServiceImpl implements VehiculoService {
         }
 
         @Override
+        public VehiculoDto buscarPorId(Long id) {
+                Vehiculo vehiculo = vehiculoRepository.findById(id)
+                                .orElseThrow(() -> new VehiculoNoEncontrado());
+                return new VehiculoDto(vehiculo.getId(), vehiculo.getPlaca(), vehiculo.getTipoVehiculo(),
+                                convertorClienteResponsive(vehiculo.getCliente()));
+        }
+
+        @Override
         public VehiculoDto buscarPorPlaca(String placa) {
                 Vehiculo vehiculo = vehiculoRepository.findByPlaca(placa)
                                 .orElseThrow(() -> new VehiculoNoEncontrado());

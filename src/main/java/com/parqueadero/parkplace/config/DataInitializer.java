@@ -49,7 +49,7 @@ public class DataInitializer {
                         Usuario usuario = Usuario.builder()
                                 .nombre("Administrador principal")
                                 .email("admin@parkplace.com")
-                                .contraseña(passwordEncoder.encode("admin123"))
+                                .contraseña(passwordEncoder.encode("|"))
                                 .rol(rol)
                                 .build();
 

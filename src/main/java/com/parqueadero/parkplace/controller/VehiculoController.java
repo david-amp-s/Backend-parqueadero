@@ -34,6 +34,11 @@ public class VehiculoController {
         return vehiculoService.listar();
     }
 
+    @GetMapping("/id/{id}")
+    public VehiculoDto buscarVehiculoId(@PathVariable Long id) {
+        return vehiculoService.buscarPorId(id);
+    }
+
     @GetMapping("/{placa}")
     public VehiculoDto buscarVehiculo(@PathVariable String placa) {
         return vehiculoService.buscarPorPlaca(placa);
