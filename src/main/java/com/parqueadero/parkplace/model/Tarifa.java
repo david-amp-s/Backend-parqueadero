@@ -1,13 +1,13 @@
 package com.parqueadero.parkplace.model;
 
-import com.parqueadero.parkplace.enums.TipoVehiculo;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,10 +23,11 @@ import lombok.RequiredArgsConstructor;
 public class Tarifa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
-    @Enumerated(EnumType.STRING)
-    private TipoVehiculo tipoVehiculo;
+    @ManyToOne
+    @JoinColumn(name = "tipo_vehiculo_id")
+    private TipoVehiculoEnt tipoVehiculoEnt;
 
     private Integer valorHora;
 

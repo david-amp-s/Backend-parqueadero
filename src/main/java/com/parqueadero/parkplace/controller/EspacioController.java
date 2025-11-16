@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.parqueadero.parkplace.Service.EspacioService;
 import com.parqueadero.parkplace.dto.EspacioCreateDto;
 import com.parqueadero.parkplace.dto.EspacioDto;
-import com.parqueadero.parkplace.enums.TipoVehiculo;
 import com.parqueadero.parkplace.model.Espacio;
 
 import jakarta.validation.Valid;
@@ -31,23 +30,13 @@ public class EspacioController {
         return espacioService.crearEspacio(dto);
     }
 
-    @GetMapping("/carro")
-    public List<Espacio> espaciosDisponiblesCarro() {
-        return espacioService.espaciosDisponiblesCarro();
-    }
-
-    @GetMapping("/moto")
-    public List<Espacio> espaciosDisponiblesMoto() {
-        return espacioService.espaciosDisponiblesMoto();
-    }
-
-    @GetMapping("/bicicleta")
-    public List<Espacio> espaciosDisponiblesBicicleta() {
-        return espacioService.espaciosDisponiblesBicicleta();
+    @GetMapping("/{vehiculo}")
+    public List<Espacio> espaciosDisponibles(@PathVariable String vehiculo) {
+        return espacioService.espaciosDisponibles(vehiculo);
     }
 
     @PutMapping("/asignar")
-    EspacioDto asignarEspacio(@RequestBody TipoVehiculo tipoVehiculo) {
+    EspacioDto asignarEspacio(@RequestBody String tipoVehiculo) {
 
         return espacioService.asignarEspacio(tipoVehiculo);
     }

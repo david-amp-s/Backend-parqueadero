@@ -1,22 +1,25 @@
 package com.parqueadero.parkplace.config;
 
+import java.util.List;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.parqueadero.parkplace.enums.EstadoEspacio;
-import com.parqueadero.parkplace.enums.TipoVehiculo;
 import com.parqueadero.parkplace.exception.RolNoEncontrado;
 import com.parqueadero.parkplace.model.Espacio;
 import com.parqueadero.parkplace.model.FormaPago;
 import com.parqueadero.parkplace.model.Rol;
 import com.parqueadero.parkplace.model.Tarifa;
+import com.parqueadero.parkplace.model.TipoVehiculoEnt;
 import com.parqueadero.parkplace.model.Usuario;
 import com.parqueadero.parkplace.repository.EspacioRepository;
 import com.parqueadero.parkplace.repository.FormaPagoRepository;
 import com.parqueadero.parkplace.repository.RolRepository;
 import com.parqueadero.parkplace.repository.TarifaRepository;
+import com.parqueadero.parkplace.repository.TipoVehiculoEntRepository;
 import com.parqueadero.parkplace.repository.UsuarioRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -59,16 +62,27 @@ public class DataInitializer {
     }
 
     @Bean
-    CommandLineRunner initTarifas(TarifaRepository tarifaRepository) {
+    CommandLineRunner initTarifas(
+            TarifaRepository tarifaRepository,
+            TipoVehiculoEntRepository tipoVehiculoEntRepository) {
+
         return args -> {
-            for (TipoVehiculo tipo : TipoVehiculo.values()) {
-                if (tarifaRepository.findByTipoVehiculo(tipo).isEmpty()) {
-                    tarifaRepository.save(Tarifa.builder()
-                            .tipoVehiculo(tipo)
-                            .valorHora(0)
-                            .valorMinuto(0)
-                            .valorTarifaFija(0)
-                            .build());
+
+            // Obtener todos los tipos de vehículo registrados en BD
+            List<TipoVehiculoEnt> tipos = tipoVehiculoEntRepository.findAll();
+
+            for (TipoVehiculoEnt tipo : tipos) {
+
+                // Revisar si ya existe una tarifa para ese tipo
+                if (tarifaRepository.findByTipoVehiculoEnt(tipo).isEmpty()) {
+
+                    tarifaRepository.save(
+                            Tarifa.builder()
+                                    .tipoVehiculoEnt(tipo)
+                                    .valorHora(0)
+                                    .valorMinuto(0)
+                                    .valorTarifaFija(0)
+                                    .build());
                 }
             }
         };
@@ -90,28 +104,60 @@ public class DataInitializer {
     }
 
     @Bean
-    CommandLineRunner initEspacios(EspacioRepository espacioRepository) {
+    CommandLineRunner initEspacios(EspacioRepository espacioRepository,
+            TipoVehiculoEntRepository tipoVehiculoEntRepository) {
         return args -> {
+
             if (espacioRepository.count() == 0) {
-                Integer espacios = 10;
-                for (Integer i = 0; i <= espacios; i++) {
+
+                // Buscar los tipos de vehículo: CARRO y MOTO
+                TipoVehiculoEnt carro = tipoVehiculoEntRepository.findByTipo("CARRO")
+                        .orElseThrow(() -> new RuntimeException("Tipo CARRO no encontrado"));
+
+                TipoVehiculoEnt moto = tipoVehiculoEntRepository.findByTipo("MOTO")
+                        .orElseThrow(() -> new RuntimeException("Tipo MOTO no encontrado"));
+
+                int espacios = 10;
+
+                // Espacios para carros
+                for (int i = 0; i <= espacios; i++) {
                     Espacio espacio = Espacio.builder()
                             .codigo("A" + i)
                             .tipoEspacio(EstadoEspacio.DISPONIBLE)
-                            .tipoVehiculoPermitido(TipoVehiculo.CARRO)
+                            .tipoVehiculoEnt(carro)
                             .build();
+
                     espacioRepository.save(espacio);
                 }
 
-                for (Integer i = 0; i <= espacios; i++) {
+                // Espacios para motos
+                for (int i = 0; i <= espacios; i++) {
                     Espacio espacio = Espacio.builder()
                             .codigo("B" + i)
                             .tipoEspacio(EstadoEspacio.DISPONIBLE)
-                            .tipoVehiculoPermitido(TipoVehiculo.MOTO)
+                            .tipoVehiculoEnt(moto)
                             .build();
+
                     espacioRepository.save(espacio);
                 }
+            }
+        };
+    }
 
+    @Bean
+    CommandLineRunner initVehiculosPar(TipoVehiculoEntRepository tipoVehiculoEntRepository) {
+        return args -> {
+            if (tipoVehiculoEntRepository.findByTipo("CARRO").isEmpty()) {
+                tipoVehiculoEntRepository.save(
+                        TipoVehiculoEnt.builder()
+                                .tipo("CARRO")
+                                .build());
+            }
+            if (tipoVehiculoEntRepository.findByTipo("MOTO").isEmpty()) {
+                tipoVehiculoEntRepository.save(
+                        TipoVehiculoEnt.builder()
+                                .tipo("MOTO")
+                                .build());
             }
         };
     }

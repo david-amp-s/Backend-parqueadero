@@ -10,7 +10,6 @@ import com.parqueadero.parkplace.Service.SalidaService;
 import com.parqueadero.parkplace.dto.SalidaCreateDto;
 import com.parqueadero.parkplace.dto.SalidaDto;
 import com.parqueadero.parkplace.enums.EstadoEspacio;
-import com.parqueadero.parkplace.enums.TipoVehiculo;
 import com.parqueadero.parkplace.exception.IngresoNoEncontrado;
 import com.parqueadero.parkplace.exception.SalidaNoEncontrada;
 import com.parqueadero.parkplace.exception.TipoVehiculoNoRegistrado;
@@ -19,6 +18,7 @@ import com.parqueadero.parkplace.model.Espacio;
 import com.parqueadero.parkplace.model.Ingreso;
 import com.parqueadero.parkplace.model.Salida;
 import com.parqueadero.parkplace.model.Tarifa;
+import com.parqueadero.parkplace.model.TipoVehiculoEnt;
 import com.parqueadero.parkplace.model.Vehiculo;
 import com.parqueadero.parkplace.repository.EspacioRepository;
 import com.parqueadero.parkplace.repository.IngresoRepository;
@@ -59,8 +59,8 @@ public class SalidaServiceImpl implements SalidaService {
         Duration duracion = Duration.between(ingreso.getFechaIngreso(), fechaSalida);
         Long minutos = duracion.toMinutes();
 
-        TipoVehiculo tipoVehiculo = ingreso.getVehiculo().getTipoVehiculo();
-        Tarifa tarifa = tarifaRepository.findByTipoVehiculo(tipoVehiculo)
+        TipoVehiculoEnt tipoVehiculo = ingreso.getVehiculo().getTipoVehiculoEnt();
+        Tarifa tarifa = tarifaRepository.findByTipoVehiculoEnt(tipoVehiculo)
                 .orElseThrow(() -> new TipoVehiculoNoRegistrado());
         int valorTotal;
         if (tarifa.isTarifaFija()) {

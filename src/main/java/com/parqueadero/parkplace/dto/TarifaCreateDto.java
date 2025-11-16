@@ -1,11 +1,10 @@
 package com.parqueadero.parkplace.dto;
 
-import com.parqueadero.parkplace.enums.TipoVehiculo;
-
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record TarifaCreateDto(
-        @NotNull(message = "Ingrese un vehiculo valido") TipoVehiculo tipoVehiculo,
+        @NotBlank(message = "Ingrese un vehiculo valido") String vehiculo,
         @NotNull(message = "Ingrese un valor valido") int nuevaTarifa) {
 
 }

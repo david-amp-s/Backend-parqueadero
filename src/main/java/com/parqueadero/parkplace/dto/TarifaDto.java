@@ -1,10 +1,10 @@
 package com.parqueadero.parkplace.dto;
 
-import com.parqueadero.parkplace.enums.TipoVehiculo;
+import com.parqueadero.parkplace.model.TipoVehiculoEnt;
 
 public record TarifaDto(
-        Long id,
-        TipoVehiculo tipoVehiculo,
-        int nuevaTarifa) {
+                Long id,
+                TipoVehiculoEnt tipoVehiculo,
+                int nuevaTarifa) {
 
 }

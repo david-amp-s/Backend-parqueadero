@@ -10,7 +10,6 @@ import com.parqueadero.parkplace.Service.IngresoService;
 import com.parqueadero.parkplace.dto.IngresoCreateDto;
 import com.parqueadero.parkplace.dto.IngresoDto;
 import com.parqueadero.parkplace.enums.EstadoEspacio;
-import com.parqueadero.parkplace.exception.EspacioNoEncontrado;
 import com.parqueadero.parkplace.exception.IngresoNoEncontrado;
 import com.parqueadero.parkplace.exception.VehiculoConSalidaPendienteException;
 import com.parqueadero.parkplace.exception.VehiculoIngresadoException;
@@ -36,7 +35,7 @@ public class IngresoServiceImpl implements IngresoService {
 
     private IngresoDto conversorDto(Ingreso ingreso) {
         return new IngresoDto(ingreso.getId(), ingreso.getVehiculo().getPlaca(),
-                ingreso.getVehiculo().getTipoVehiculo().name(), ingreso.getEspacio().getCodigo(),
+                ingreso.getVehiculo().getTipoVehiculoEnt().getTipo(), ingreso.getEspacio().getCodigo(),
                 ingreso.getFechaIngreso());
     }
 
@@ -44,8 +43,8 @@ public class IngresoServiceImpl implements IngresoService {
     public IngresoDto registrarIngreso(IngresoCreateDto dto) {
         Vehiculo vehiculo = vehiculoRepository.findByPlaca(dto.placa())
                 .orElseThrow(() -> new VehiculoNoEncontrado());
-        Espacio espacio = espacioRepository.findFirstByTipoEspacioAndTipoVehiculoPermitidoOrderByIdAsc(
-                EstadoEspacio.DISPONIBLE, vehiculo.getTipoVehiculo())
+        Espacio espacio = espacioRepository.findFirstByTipoEspacioAndTipoVehiculoEntOrderByIdAsc(
+                EstadoEspacio.DISPONIBLE, vehiculo.getTipoVehiculoEnt())
                 .orElseThrow(() -> new EspaciosDisponiblesNoEncontradosException());
 
         if (vehiculo.getIngreso()) {

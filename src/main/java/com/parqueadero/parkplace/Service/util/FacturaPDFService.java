@@ -3,9 +3,9 @@ package com.parqueadero.parkplace.Service.util;
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.PdfWriter;
 import com.parqueadero.parkplace.dto.FacturaDto;
-import com.parqueadero.parkplace.enums.TipoVehiculo;
 import com.parqueadero.parkplace.exception.FacturaNoEncontradaException;
 import com.parqueadero.parkplace.model.Factura;
+import com.parqueadero.parkplace.model.TipoVehiculoEnt;
 import com.parqueadero.parkplace.repository.FacturaRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class FacturaPDFService {
 
         String nombreCliente = factura.getSalida().getIngreso().getVehiculo().getCliente().getNombre();
         String placaVehiculo = factura.getSalida().getIngreso().getVehiculo().getPlaca();
-        TipoVehiculo tipoVeiculo = factura.getSalida().getIngreso().getVehiculo().getTipoVehiculo();
+        TipoVehiculoEnt tipoVeiculo = factura.getSalida().getIngreso().getVehiculo().getTipoVehiculoEnt();
         LocalDateTime fechaEntrada = factura.getSalida().getIngreso().getFechaIngreso();
         LocalDateTime fechaSalida = factura.getSalida().getFechaSalida();
 
@@ -59,7 +59,7 @@ public class FacturaPDFService {
                 "Fecha: " + facturaDTO.fecha().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))));
         document.add(new Paragraph("Cliente: " + nombreCliente));
         document.add(new Paragraph("Vehículo: " + placaVehiculo));
-        document.add(new Paragraph("Tipo: " + tipoVeiculo));
+        document.add(new Paragraph("Tipo: " + tipoVeiculo.getTipo()));
         document.add(new Paragraph("Tiempo Estacionado: " + tiempoFormateado));
         document.add(new Paragraph("Total: $" + total));
         document.add(new Paragraph(" "));

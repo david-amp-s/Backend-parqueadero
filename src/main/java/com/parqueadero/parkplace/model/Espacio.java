@@ -1,7 +1,6 @@
 package com.parqueadero.parkplace.model;
 
 import com.parqueadero.parkplace.enums.EstadoEspacio;
-import com.parqueadero.parkplace.enums.TipoVehiculo;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -9,6 +8,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,7 +31,7 @@ public class Espacio {
 
     @Enumerated(EnumType.STRING)
     private EstadoEspacio tipoEspacio;
-
-    @Enumerated(EnumType.STRING)
-    private TipoVehiculo tipoVehiculoPermitido;
+    @ManyToOne
+    @JoinColumn(name = "tipo_vehiculo_id")
+    private TipoVehiculoEnt tipoVehiculoEnt;
 }
