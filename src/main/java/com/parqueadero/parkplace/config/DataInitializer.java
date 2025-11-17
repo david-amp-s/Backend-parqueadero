@@ -9,18 +9,21 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.parqueadero.parkplace.enums.EstadoEspacio;
 import com.parqueadero.parkplace.exception.RolNoEncontrado;
+import com.parqueadero.parkplace.model.Cliente;
 import com.parqueadero.parkplace.model.Espacio;
 import com.parqueadero.parkplace.model.FormaPago;
 import com.parqueadero.parkplace.model.Rol;
 import com.parqueadero.parkplace.model.Tarifa;
 import com.parqueadero.parkplace.model.TipoVehiculoEnt;
 import com.parqueadero.parkplace.model.Usuario;
+import com.parqueadero.parkplace.repository.ClienteRepository;
 import com.parqueadero.parkplace.repository.EspacioRepository;
 import com.parqueadero.parkplace.repository.FormaPagoRepository;
 import com.parqueadero.parkplace.repository.RolRepository;
 import com.parqueadero.parkplace.repository.TarifaRepository;
 import com.parqueadero.parkplace.repository.TipoVehiculoEntRepository;
 import com.parqueadero.parkplace.repository.UsuarioRepository;
+import com.parqueadero.parkplace.repository.VehiculoRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -52,7 +55,7 @@ public class DataInitializer {
                         Usuario usuario = Usuario.builder()
                                 .nombre("Administrador principal")
                                 .email("admin@parkplace.com")
-                                .contraseña(passwordEncoder.encode("|"))
+                                .contraseña(passwordEncoder.encode("admin123"))
                                 .rol(rol)
                                 .build();
 
@@ -80,7 +83,7 @@ public class DataInitializer {
                             Tarifa.builder()
                                     .tipoVehiculoEnt(tipo)
                                     .valorHora(0)
-                                    .valorMinuto(0)
+                                    .valorMinuto(270)
                                     .valorTarifaFija(0)
                                     .build());
                 }
@@ -157,6 +160,20 @@ public class DataInitializer {
                 tipoVehiculoEntRepository.save(
                         TipoVehiculoEnt.builder()
                                 .tipo("MOTO")
+                                .build());
+            }
+        };
+    }
+
+    @Bean
+    CommandLineRunner initUserGuest(ClienteRepository clienteRepository) {
+        return args -> {
+            if (clienteRepository.findByNombre("INVITADO").isEmpty()) {
+                clienteRepository.save(
+                        Cliente.builder()
+                                .nombre("INVITADO")
+                                .cedula("0")
+                                .correo("invitado.com")
                                 .build());
             }
         };

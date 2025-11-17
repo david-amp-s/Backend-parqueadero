@@ -10,6 +10,7 @@ import com.parqueadero.parkplace.dto.VehiculoCreateDto;
 import com.parqueadero.parkplace.dto.VehiculoDto;
 import com.parqueadero.parkplace.exception.ClienteNoEncontradoException;
 import com.parqueadero.parkplace.exception.TipoVehiculoException;
+import com.parqueadero.parkplace.exception.VehiculoExistenteException;
 import com.parqueadero.parkplace.exception.VehiculoNoEncontrado;
 import com.parqueadero.parkplace.model.Cliente;
 import com.parqueadero.parkplace.model.TipoVehiculoEnt;
@@ -41,12 +42,22 @@ public class VehiculoServiceImpl implements VehiculoService {
 
         @Override
         public VehiculoDto crear(VehiculoCreateDto dto) {
+                String placa = dto.placa().trim().toUpperCase();
+                Cliente cliente;
                 TipoVehiculoEnt tipoVehiculo = tipoVehiculoEntRepository.findByTipo(dto.tipoVehiculo())
                                 .orElseThrow(() -> new TipoVehiculoException());
-                Cliente cliente = clienteRepository.findByCedula(dto.cedula())
-                                .orElseThrow(() -> new ClienteNoEncontradoException(dto.cedula()));
+                vehiculoRepository.findByPlaca(placa).ifPresent(v -> {
+                        throw new VehiculoExistenteException();
+                });
+                if (dto.cedula().isBlank()) {
+                        cliente = clienteRepository.findByNombre("INVITADO")
+                                        .orElseThrow(() -> new ClienteNoEncontradoException("Invitado no registrado"));
+                } else {
+                        cliente = clienteRepository.findByCedula(dto.cedula())
+                                        .orElseThrow(() -> new ClienteNoEncontradoException("Cliente no encontrado"));
+                }
                 Vehiculo vehiculo = Vehiculo.builder()
-                                .placa(dto.placa())
+                                .placa(placa)
                                 .tipoVehiculoEnt(tipoVehiculo)
                                 .cliente(cliente)
                                 .ingreso(false)
