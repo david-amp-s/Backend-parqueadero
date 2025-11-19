@@ -9,11 +9,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.parqueadero.parkplace.enums.EstadoEspacio;
 import com.parqueadero.parkplace.exception.RolNoEncontrado;
+import com.parqueadero.parkplace.exception.TipoClienteNoEncontradoException;
 import com.parqueadero.parkplace.model.Cliente;
 import com.parqueadero.parkplace.model.Espacio;
 import com.parqueadero.parkplace.model.FormaPago;
 import com.parqueadero.parkplace.model.Rol;
 import com.parqueadero.parkplace.model.Tarifa;
+import com.parqueadero.parkplace.model.TipoCliente;
 import com.parqueadero.parkplace.model.TipoVehiculoEnt;
 import com.parqueadero.parkplace.model.Usuario;
 import com.parqueadero.parkplace.repository.ClienteRepository;
@@ -21,6 +23,7 @@ import com.parqueadero.parkplace.repository.EspacioRepository;
 import com.parqueadero.parkplace.repository.FormaPagoRepository;
 import com.parqueadero.parkplace.repository.RolRepository;
 import com.parqueadero.parkplace.repository.TarifaRepository;
+import com.parqueadero.parkplace.repository.TipoClienteRepository;
 import com.parqueadero.parkplace.repository.TipoVehiculoEntRepository;
 import com.parqueadero.parkplace.repository.UsuarioRepository;
 import com.parqueadero.parkplace.repository.VehiculoRepository;
@@ -166,14 +169,37 @@ public class DataInitializer {
     }
 
     @Bean
-    CommandLineRunner initUserGuest(ClienteRepository clienteRepository) {
+    CommandLineRunner initTipoCliente(TipoClienteRepository tipoClienteRepository) {
+        return args -> {
+            if (tipoClienteRepository.findByNombre("CLIENTE").isEmpty()) {
+                tipoClienteRepository.save(
+                        TipoCliente.builder()
+                                .nombre("CLIENTE")
+                                .tarifaFija(0)
+                                .build());
+                if (tipoClienteRepository.findByNombre("ESTUDIANTE").isEmpty()) {
+                    tipoClienteRepository.save(
+                            TipoCliente.builder()
+                                    .nombre("ESTUDIANTE")
+                                    .tarifaFija(3000)
+                                    .build());
+                }
+            }
+        };
+    }
+
+    @Bean
+    CommandLineRunner initUserGuest(ClienteRepository clienteRepository, TipoClienteRepository tipoClienteRepository) {
+        TipoCliente tipoCliente = tipoClienteRepository.findByNombre("CLIENTE")
+                .orElseThrow(() -> new TipoClienteNoEncontradoException());
         return args -> {
             if (clienteRepository.findByNombre("INVITADO").isEmpty()) {
                 clienteRepository.save(
                         Cliente.builder()
                                 .nombre("INVITADO")
                                 .cedula("0")
-                                .correo("invitado.com")
+                                .correo("invitado")
+                                .tipoCliente(tipoCliente)
                                 .build());
             }
         };

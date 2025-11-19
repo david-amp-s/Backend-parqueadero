@@ -8,57 +8,80 @@ import com.parqueadero.parkplace.Service.ClienteService;
 import com.parqueadero.parkplace.dto.ClienteCreateDto;
 import com.parqueadero.parkplace.dto.ClienteDto;
 import com.parqueadero.parkplace.exception.ClienteNoEncontradoException;
+import com.parqueadero.parkplace.exception.TipoClienteNoEncontradoException;
 import com.parqueadero.parkplace.model.Cliente;
+import com.parqueadero.parkplace.model.TipoCliente;
 import com.parqueadero.parkplace.repository.ClienteRepository;
+import com.parqueadero.parkplace.repository.TipoClienteRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class ClienteServiceImpl implements ClienteService {
-    private final ClienteRepository clienteRepository;
+        private final ClienteRepository clienteRepository;
+        private final TipoClienteRepository tipoClienteRepository;
 
-    @Override
-    public ClienteDto crear(ClienteCreateDto dto) {
-        Cliente cliente = Cliente.builder()
-                .nombre(dto.nombre())
-                .correo(dto.correo())
-                .cedula(dto.cedula())
-                .build();
-        clienteRepository.save(cliente);
-        return new ClienteDto(cliente.getId(), cliente.getNombre(), cliente.getCorreo(), cliente.getCedula());
-    }
-
-    @Override
-    public List<ClienteDto> listar() {
-        return clienteRepository.findAll().stream()
-                .map(c -> new ClienteDto(c.getId(), c.getNombre(), c.getCorreo(), c.getCedula()))
-                .toList();
-    }
-
-    @Override
-    public ClienteDto buscar(String cedula) {
-        Cliente cliente = clienteRepository.findByCedula(cedula)
-                .orElseThrow(() -> new ClienteNoEncontradoException(cedula));
-        return new ClienteDto(cliente.getId(), cliente.getNombre(), cliente.getCorreo(), cliente.getCedula());
-    }
-
-    @Override
-    public ClienteDto actualizar(String cedula, ClienteCreateDto dto) {
-        Cliente cliente = clienteRepository.findByCedula(cedula)
-                .orElseThrow(() -> new ClienteNoEncontradoException(cedula));
-        cliente.setNombre(dto.nombre());
-        cliente.setCedula(dto.cedula());
-        cliente.setCorreo(dto.correo());
-        clienteRepository.save(cliente);
-        return new ClienteDto(cliente.getId(), cliente.getNombre(), cliente.getCorreo(), cliente.getCedula());
-    }
-
-    @Override
-    public void eliminar(String cedula) {
-        if (!clienteRepository.existsByCedula(cedula)) {
-            throw new RuntimeException("El cliente no existe");
+        private TipoCliente buscarTipoCliente(String tipoCliente) {
+                return tipoClienteRepository.findByNombre(tipoCliente)
+                                .orElseThrow(() -> new TipoClienteNoEncontradoException());
         }
-        clienteRepository.deleteByCedula(cedula);
-    }
+
+        @Override
+        public ClienteDto crear(ClienteCreateDto dto) {
+                TipoCliente tipoCliente;
+                if (dto.tipoCliente().isBlank()) {
+                        tipoCliente = buscarTipoCliente("INVITADO");
+                } else {
+                        tipoCliente = buscarTipoCliente(dto.tipoCliente());
+
+                }
+                Cliente cliente = Cliente.builder()
+                                .nombre(dto.nombre())
+                                .correo(dto.correo())
+                                .cedula(dto.cedula())
+                                .tipoCliente(tipoCliente)
+                                .build();
+                clienteRepository.save(cliente);
+                return new ClienteDto(cliente.getId(), cliente.getNombre(), cliente.getCorreo(), cliente.getCedula(),
+                                cliente.getTipoCliente().getNombre());
+        }
+
+        @Override
+        public List<ClienteDto> listar() {
+                return clienteRepository.findAll().stream()
+                                .map(c -> new ClienteDto(c.getId(), c.getNombre(), c.getCorreo(), c.getCedula(),
+                                                c.getTipoCliente().getNombre()))
+                                .toList();
+        }
+
+        @Override
+        public ClienteDto buscar(String cedula) {
+                Cliente cliente = clienteRepository.findByCedula(cedula)
+                                .orElseThrow(() -> new ClienteNoEncontradoException(cedula));
+                return new ClienteDto(cliente.getId(), cliente.getNombre(), cliente.getCorreo(), cliente.getCedula(),
+                                cliente.getTipoCliente().getNombre());
+        }
+
+        @Override
+        public ClienteDto actualizar(String cedula, ClienteCreateDto dto) {
+                TipoCliente tipoCliente = buscarTipoCliente(dto.tipoCliente());
+                Cliente cliente = clienteRepository.findByCedula(cedula)
+                                .orElseThrow(() -> new ClienteNoEncontradoException(cedula));
+                cliente.setNombre(dto.nombre());
+                cliente.setCedula(dto.cedula());
+                cliente.setCorreo(dto.correo());
+                cliente.setTipoCliente(tipoCliente);
+                clienteRepository.save(cliente);
+                return new ClienteDto(cliente.getId(), cliente.getNombre(), cliente.getCorreo(), cliente.getCedula(),
+                                cliente.getTipoCliente().getNombre());
+        }
+
+        @Override
+        public void eliminar(String cedula) {
+                if (!clienteRepository.existsByCedula(cedula)) {
+                        throw new RuntimeException("El cliente no existe");
+                }
+                clienteRepository.deleteByCedula(cedula);
+        }
 }

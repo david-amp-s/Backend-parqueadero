@@ -5,8 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,26 +12,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "clientes")
-@Data
-@NoArgsConstructor
+@Table(name = "tipo_cliente")
 @AllArgsConstructor
+@NoArgsConstructor
+@Data
 @Builder
-public class Cliente {
+public class TipoCliente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String nombre;
+    @Column(nullable = false)
+    private Integer tarifaFija;
 
-    @Column(nullable = false, unique = true)
-    private String correo;
-
-    @Column(nullable = false, unique = true)
-    private String cedula;
-
-    @ManyToOne
-    @JoinColumn(name = "tipo_cliente", nullable = false)
-    private TipoCliente tipoCliente;
 }

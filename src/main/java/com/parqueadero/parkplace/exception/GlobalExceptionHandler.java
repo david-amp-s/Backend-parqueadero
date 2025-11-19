@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
 
         @ExceptionHandler({
                         ClienteNoEncontradoException.class,
-                        EspacioNoEncontrado.class,
+                        EspaciosDisponiblesNoEncontradosException.class,
                         FacturaNoEncontradaException.class,
                         FormapagoNoEncontrada.class,
                         IngresoNoEncontrado.class,
