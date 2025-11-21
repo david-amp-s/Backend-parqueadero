@@ -1,8 +1,6 @@
 package com.parqueadero.parkplace.model;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -28,13 +26,12 @@ public class Tarifa {
     @ManyToOne
     @JoinColumn(name = "tipo_vehiculo_id")
     private TipoVehiculoEnt tipoVehiculoEnt;
-
-    private Integer valorHora;
+    @ManyToOne
+    @JoinColumn(name = "tipo_cliente_id")
+    private TipoCliente tipoCliente;
 
     private Integer valorMinuto;
 
     private Integer valorTarifaFija;
-
-    private boolean TarifaFija;
 
 }

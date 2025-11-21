@@ -12,8 +12,10 @@ import com.parqueadero.parkplace.dto.SalidaDto;
 import com.parqueadero.parkplace.enums.EstadoEspacio;
 import com.parqueadero.parkplace.exception.IngresoNoEncontrado;
 import com.parqueadero.parkplace.exception.SalidaNoEncontrada;
+import com.parqueadero.parkplace.exception.TarifaNoEncontradException;
 import com.parqueadero.parkplace.exception.TipoVehiculoNoRegistrado;
 import com.parqueadero.parkplace.exception.VehiculoNoEncontrado;
+import com.parqueadero.parkplace.model.Cliente;
 import com.parqueadero.parkplace.model.Espacio;
 import com.parqueadero.parkplace.model.Ingreso;
 import com.parqueadero.parkplace.model.Salida;
@@ -44,7 +46,6 @@ public class SalidaServiceImpl implements SalidaService {
 
     @Override
     public SalidaDto registrarSalida(SalidaCreateDto salida) {
-
         Vehiculo vehiculo = vehiculoRepository.findByPlaca(salida.placa())
                 .orElseThrow(() -> new VehiculoNoEncontrado());
 
@@ -60,13 +61,16 @@ public class SalidaServiceImpl implements SalidaService {
         Long minutos = duracion.toMinutes();
 
         TipoVehiculoEnt tipoVehiculo = ingreso.getVehiculo().getTipoVehiculoEnt();
-        Tarifa tarifa = tarifaRepository.findByTipoVehiculoEnt(tipoVehiculo)
-                .orElseThrow(() -> new TipoVehiculoNoRegistrado());
+        Tarifa tarifa = tarifaRepository
+                .findByTipoVehiculoEntAndTipoCliente(tipoVehiculo, vehiculo.getCliente().getTipoCliente())
+                .orElseThrow(() -> new TarifaNoEncontradException());
         int valorTotal;
-        if (tarifa.isTarifaFija()) {
-            valorTotal = tarifa.getValorTarifaFija();
+        Integer valorPorMinutos = tarifa.getValorMinuto() * minutos.intValue();
+        Integer valorTarifaFija = tarifa.getValorTarifaFija();
+        if (valorTarifaFija == 0) {
+            valorTotal = valorPorMinutos;
         } else {
-            valorTotal = tarifa.getValorMinuto() * minutos.intValue();
+            valorTotal = Math.min(valorPorMinutos, valorTarifaFija);
         }
 
         Salida nuevaSalida = Salida.builder()

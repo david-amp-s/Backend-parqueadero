@@ -1,4 +1,4 @@
-package com.parqueadero.parkplace.Service.impl;
+package com.parqueadero.parkplace.exception;
 
 public class EspaciosDisponiblesNoEncontradosException extends RuntimeException {
     public EspaciosDisponiblesNoEncontradosException() {

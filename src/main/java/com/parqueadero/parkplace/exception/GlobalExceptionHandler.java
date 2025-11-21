@@ -6,8 +6,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.parqueadero.parkplace.Service.impl.EspaciosDisponiblesNoEncontradosException;
-
 import java.util.HashMap;
 import java.util.Map;
 

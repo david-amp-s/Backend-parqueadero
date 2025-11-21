@@ -17,40 +17,29 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class TarifaServiceImpl implements TarifaService {
-    private final TarifaRepository tarifaRepository;
-    private final TipoVehiculoEntRepository tipoVehiculoEntRepository;
+        private final TarifaRepository tarifaRepository;
+        private final TipoVehiculoEntRepository tipoVehiculoEntRepository;
 
-    @Override
-    public TarifaDto cambiarTarifaMinuto(TarifaCreateDto dto) {
-        TipoVehiculoEnt tipoVehiculo = tipoVehiculoEntRepository.findByTipo(dto.vehiculo())
-                .orElseThrow(() -> new TipoVehiculoException());
-        Tarifa tarifa = tarifaRepository.findByTipoVehiculoEnt(tipoVehiculo)
-                .orElseThrow(() -> new TipoVehiculoNoRegistrado());
-        tarifa.setValorMinuto(dto.nuevaTarifa());
-        tarifaRepository.save(tarifa);
-        return new TarifaDto(tarifa.getId(), tarifa.getTipoVehiculoEnt(), tarifa.getValorMinuto());
-    }
+        @Override
+        public TarifaDto cambiarTarifaMinuto(TarifaCreateDto dto) {
+                TipoVehiculoEnt tipoVehiculo = tipoVehiculoEntRepository.findByTipo(dto.vehiculo())
+                                .orElseThrow(() -> new TipoVehiculoException());
+                Tarifa tarifa = tarifaRepository.findByTipoVehiculoEnt(tipoVehiculo)
+                                .orElseThrow(() -> new TipoVehiculoNoRegistrado());
+                tarifa.setValorMinuto(dto.valorMinuto());
+                tarifaRepository.save(tarifa);
+                return new TarifaDto(tarifa.getId(), tarifa.getTipoVehiculoEnt(), tarifa.getValorMinuto());
+        }
 
-    @Override
-    public TarifaDto cambiarTarifaHora(TarifaCreateDto dto) {
-        TipoVehiculoEnt tipoVehiculo = tipoVehiculoEntRepository.findByTipo(dto.vehiculo())
-                .orElseThrow(() -> new TipoVehiculoException());
-        Tarifa tarifa = tarifaRepository.findByTipoVehiculoEnt(tipoVehiculo)
-                .orElseThrow(() -> new TipoVehiculoNoRegistrado());
-        tarifa.setValorHora(dto.nuevaTarifa());
-        tarifaRepository.save(tarifa);
-        return new TarifaDto(tarifa.getId(), tarifa.getTipoVehiculoEnt(), tarifa.getValorHora());
-    }
-
-    @Override
-    public TarifaDto cambiarTarifaFija(TarifaCreateDto dto) {
-        TipoVehiculoEnt tipoVehiculo = tipoVehiculoEntRepository.findByTipo(dto.vehiculo())
-                .orElseThrow(() -> new TipoVehiculoException());
-        Tarifa tarifa = tarifaRepository.findByTipoVehiculoEnt(tipoVehiculo)
-                .orElseThrow(() -> new TipoVehiculoNoRegistrado());
-        tarifa.setValorTarifaFija(dto.nuevaTarifa());
-        tarifaRepository.save(tarifa);
-        return new TarifaDto(tarifa.getId(), tarifa.getTipoVehiculoEnt(), tarifa.getValorTarifaFija());
-    }
+        @Override
+        public TarifaDto cambiarTarifaFija(TarifaCreateDto dto) {
+                TipoVehiculoEnt tipoVehiculo = tipoVehiculoEntRepository.findByTipo(dto.vehiculo())
+                                .orElseThrow(() -> new TipoVehiculoException());
+                Tarifa tarifa = tarifaRepository.findByTipoVehiculoEnt(tipoVehiculo)
+                                .orElseThrow(() -> new TipoVehiculoNoRegistrado());
+                tarifa.setValorTarifaFija(dto.valorTarifaFija());
+                tarifaRepository.save(tarifa);
+                return new TarifaDto(tarifa.getId(), tarifa.getTipoVehiculoEnt(), tarifa.getValorTarifaFija());
+        }
 
 }

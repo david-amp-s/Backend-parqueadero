@@ -23,7 +23,4 @@ public class TipoCliente {
     private Long id;
     @Column(nullable = false, unique = true)
     private String nombre;
-    @Column(nullable = false)
-    private Integer tarifaFija;
-
 }

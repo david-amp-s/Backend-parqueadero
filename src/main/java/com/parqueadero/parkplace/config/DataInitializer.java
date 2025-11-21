@@ -26,7 +26,6 @@ import com.parqueadero.parkplace.repository.TarifaRepository;
 import com.parqueadero.parkplace.repository.TipoClienteRepository;
 import com.parqueadero.parkplace.repository.TipoVehiculoEntRepository;
 import com.parqueadero.parkplace.repository.UsuarioRepository;
-import com.parqueadero.parkplace.repository.VehiculoRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,21 +34,22 @@ import lombok.RequiredArgsConstructor;
 public class DataInitializer {
 
     @Bean
-    CommandLineRunner initRoles(RolRepository rolRepository) {
+    CommandLineRunner initAplication(RolRepository rolRepository, UsuarioRepository usuarioRepository,
+            PasswordEncoder passwordEncoder, TipoClienteRepository tipoClienteRepository,
+            TipoVehiculoEntRepository tipoVehiculoEntRepository, TarifaRepository tarifaRepository,
+            FormaPagoRepository formaPagoRepository, EspacioRepository espacioRepository,
+            ClienteRepository clienteRepository) {
         return args -> {
+
+            // roles
             if (rolRepository.findByNombre("ADMIN").isEmpty()) {
                 rolRepository.save(Rol.builder().nombre("ADMIN").build());
             }
             if (rolRepository.findByNombre("EMPLEADO").isEmpty()) {
                 rolRepository.save(Rol.builder().nombre("EMPLEADO").build());
             }
-        };
-    }
 
-    @Bean
-    CommandLineRunner initUser(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder,
-            RolRepository rolRepository) {
-        return args -> {
+            // Usuarios
             usuarioRepository.findByEmail("admin@parkplace.com")
                     .orElseGet(() -> {
                         Rol rol = rolRepository.findByNombre("ADMIN")
@@ -64,17 +64,37 @@ public class DataInitializer {
 
                         return usuarioRepository.save(usuario);
                     });
-        };
-    }
 
-    @Bean
-    CommandLineRunner initTarifas(
-            TarifaRepository tarifaRepository,
-            TipoVehiculoEntRepository tipoVehiculoEntRepository) {
+            // tipo Cliente
+            if (tipoClienteRepository.findByNombre("CLIENTE").isEmpty()) {
+                tipoClienteRepository.save(
+                        TipoCliente.builder()
+                                .nombre("CLIENTE")
+                                .build());
+            }
+            if (tipoClienteRepository.findByNombre("ESTUDIANTE").isEmpty()) {
+                tipoClienteRepository.save(
+                        TipoCliente.builder()
+                                .nombre("ESTUDIANTE")
+                                .build());
+            }
 
-        return args -> {
+            // tipo vehiculo
+            if (tipoVehiculoEntRepository.findByTipo("CARRO").isEmpty()) {
+                tipoVehiculoEntRepository.save(
+                        TipoVehiculoEnt.builder()
+                                .tipo("CARRO")
+                                .build());
+            }
+            if (tipoVehiculoEntRepository.findByTipo("MOTO").isEmpty()) {
+                tipoVehiculoEntRepository.save(
+                        TipoVehiculoEnt.builder()
+                                .tipo("MOTO")
+                                .build());
+            }
 
-            // Obtener todos los tipos de vehículo registrados en BD
+            // tarifas
+
             List<TipoVehiculoEnt> tipos = tipoVehiculoEntRepository.findAll();
 
             for (TipoVehiculoEnt tipo : tipos) {
@@ -85,18 +105,14 @@ public class DataInitializer {
                     tarifaRepository.save(
                             Tarifa.builder()
                                     .tipoVehiculoEnt(tipo)
-                                    .valorHora(0)
                                     .valorMinuto(270)
-                                    .valorTarifaFija(0)
+                                    .valorTarifaFija(3000)
+                                    .tipoCliente(null)
                                     .build());
                 }
             }
-        };
-    }
 
-    @Bean
-    CommandLineRunner initFormaPago(FormaPagoRepository formaPagoRepository) {
-        return args -> {
+            // forma Pago
             if (formaPagoRepository.findByDescripcion("EFECTIVO").isEmpty()) {
                 formaPagoRepository.save(FormaPago.builder().descripcion("EFECTIVO").build());
             }
@@ -106,14 +122,7 @@ public class DataInitializer {
             if (formaPagoRepository.findByDescripcion("TRANSFERENCIA").isEmpty()) {
                 formaPagoRepository.save(FormaPago.builder().descripcion("TRANSFERENCIA").build());
             }
-        };
-    }
-
-    @Bean
-    CommandLineRunner initEspacios(EspacioRepository espacioRepository,
-            TipoVehiculoEntRepository tipoVehiculoEntRepository) {
-        return args -> {
-
+            // Espacios
             if (espacioRepository.count() == 0) {
 
                 // Buscar los tipos de vehículo: CARRO y MOTO
@@ -147,58 +156,15 @@ public class DataInitializer {
                     espacioRepository.save(espacio);
                 }
             }
-        };
-    }
-
-    @Bean
-    CommandLineRunner initVehiculosPar(TipoVehiculoEntRepository tipoVehiculoEntRepository) {
-        return args -> {
-            if (tipoVehiculoEntRepository.findByTipo("CARRO").isEmpty()) {
-                tipoVehiculoEntRepository.save(
-                        TipoVehiculoEnt.builder()
-                                .tipo("CARRO")
-                                .build());
-            }
-            if (tipoVehiculoEntRepository.findByTipo("MOTO").isEmpty()) {
-                tipoVehiculoEntRepository.save(
-                        TipoVehiculoEnt.builder()
-                                .tipo("MOTO")
-                                .build());
-            }
-        };
-    }
-
-    @Bean
-    CommandLineRunner initTipoCliente(TipoClienteRepository tipoClienteRepository) {
-        return args -> {
-            if (tipoClienteRepository.findByNombre("CLIENTE").isEmpty()) {
-                tipoClienteRepository.save(
-                        TipoCliente.builder()
-                                .nombre("CLIENTE")
-                                .tarifaFija(0)
-                                .build());
-                if (tipoClienteRepository.findByNombre("ESTUDIANTE").isEmpty()) {
-                    tipoClienteRepository.save(
-                            TipoCliente.builder()
-                                    .nombre("ESTUDIANTE")
-                                    .tarifaFija(3000)
-                                    .build());
-                }
-            }
-        };
-    }
-
-    @Bean
-    CommandLineRunner initUserGuest(ClienteRepository clienteRepository, TipoClienteRepository tipoClienteRepository) {
-        TipoCliente tipoCliente = tipoClienteRepository.findByNombre("CLIENTE")
-                .orElseThrow(() -> new TipoClienteNoEncontradoException());
-        return args -> {
+            // Usuario Invitado
+            TipoCliente tipoCliente = tipoClienteRepository.findByNombre("CLIENTE")
+                    .orElseThrow(() -> new TipoClienteNoEncontradoException());
             if (clienteRepository.findByNombre("INVITADO").isEmpty()) {
                 clienteRepository.save(
                         Cliente.builder()
                                 .nombre("INVITADO")
                                 .cedula("0")
-                                .correo("invitado")
+                                .correo("invitado@parkplace.com")
                                 .tipoCliente(tipoCliente)
                                 .build());
             }

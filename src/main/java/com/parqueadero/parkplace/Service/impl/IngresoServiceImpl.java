@@ -10,6 +10,7 @@ import com.parqueadero.parkplace.Service.IngresoService;
 import com.parqueadero.parkplace.dto.IngresoCreateDto;
 import com.parqueadero.parkplace.dto.IngresoDto;
 import com.parqueadero.parkplace.enums.EstadoEspacio;
+import com.parqueadero.parkplace.exception.EspaciosDisponiblesNoEncontradosException;
 import com.parqueadero.parkplace.exception.IngresoNoEncontrado;
 import com.parqueadero.parkplace.exception.VehiculoConSalidaPendienteException;
 import com.parqueadero.parkplace.exception.VehiculoIngresadoException;

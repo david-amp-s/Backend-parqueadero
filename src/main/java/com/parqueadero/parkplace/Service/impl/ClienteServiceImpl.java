@@ -31,7 +31,7 @@ public class ClienteServiceImpl implements ClienteService {
         public ClienteDto crear(ClienteCreateDto dto) {
                 TipoCliente tipoCliente;
                 if (dto.tipoCliente().isBlank()) {
-                        tipoCliente = buscarTipoCliente("INVITADO");
+                        tipoCliente = buscarTipoCliente("CLIENTE");
                 } else {
                         tipoCliente = buscarTipoCliente(dto.tipoCliente());
 

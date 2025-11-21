@@ -25,11 +25,6 @@ public class TarifaController {
         return tarifaService.cambiarTarifaMinuto(dto);
     }
 
-    @PutMapping("/hora")
-    public TarifaDto cambiarTarifaHora(@RequestBody @Valid TarifaCreateDto dto) {
-        return tarifaService.cambiarTarifaHora(dto);
-    }
-
     @PutMapping("/fija")
     public TarifaDto cambiarTarifaFija(@RequestBody @Valid TarifaCreateDto dto) {
         return tarifaService.cambiarTarifaFija(dto);
