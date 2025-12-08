@@ -94,21 +94,46 @@ public class DataInitializer {
             }
 
             // tarifas
+            List<TipoVehiculoEnt> tiposVehiculo = tipoVehiculoEntRepository.findAll();
+            List<TipoCliente> tiposCliente = tipoClienteRepository.findAll();
 
-            List<TipoVehiculoEnt> tipos = tipoVehiculoEntRepository.findAll();
+            for (TipoVehiculoEnt tipoVehiculo : tiposVehiculo) {
+                for (TipoCliente tipoClienteTarifa : tiposCliente) {
 
-            for (TipoVehiculoEnt tipo : tipos) {
+                    // Evitar duplicados por tipo de vehículo + tipo de cliente
+                    boolean existe = tarifaRepository
+                            .findByTipoVehiculoEntAndTipoCliente(tipoVehiculo, tipoClienteTarifa)
+                            .isPresent();
 
-                // Revisar si ya existe una tarifa para ese tipo
-                if (tarifaRepository.findByTipoVehiculoEnt(tipo).isEmpty()) {
+                    if (!existe) {
 
-                    tarifaRepository.save(
-                            Tarifa.builder()
-                                    .tipoVehiculoEnt(tipo)
-                                    .valorMinuto(270)
-                                    .valorTarifaFija(3000)
-                                    .tipoCliente(null)
-                                    .build());
+                        int valorMinuto;
+                        int valorFija;
+
+                        // Valores diferenciados por tipo de vehículo
+                        if (tipoVehiculo.getTipo().equalsIgnoreCase("CARRO")) {
+                            valorMinuto = 300;
+                            valorFija = 4000;
+                        } else { // MOTO
+                            valorMinuto = 200;
+                            valorFija = 2500;
+                        }
+
+                        // Descuento para estudiantes
+                        if (tipoClienteTarifa.getNombre().equalsIgnoreCase("ESTUDIANTE")) {
+                            valorMinuto -= 50;
+                            valorFija -= 500;
+                        }
+
+                        Tarifa tarifa = Tarifa.builder()
+                                .tipoVehiculoEnt(tipoVehiculo)
+                                .tipoCliente(tipoClienteTarifa)
+                                .valorMinuto(valorMinuto)
+                                .valorTarifaFija(valorFija)
+                                .build();
+
+                        tarifaRepository.save(tarifa);
+                    }
                 }
             }
 

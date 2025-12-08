@@ -12,6 +12,11 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.List;
+
+import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequestMapping("/api/tarifas")
@@ -19,6 +24,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class TarifaController {
 
     private final TarifaService tarifaService;
+
+    @PostMapping()
+    public TarifaDto crearTarifa(@RequestBody TarifaCreateDto dto) {
+        return tarifaService.crearTarifa(dto);
+    }
+
+    @GetMapping()
+    public List<TarifaDto> listarTarifas() {
+        return tarifaService.obtenerTodasLasTarifas();
+    }
 
     @PutMapping("/minuto")
     public TarifaDto cambiarTarifaMinuto(@RequestBody @Valid TarifaCreateDto dto) {

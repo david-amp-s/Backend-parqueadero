@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@RequestMapping("/login")
+@RequestMapping("/api/login")
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthenticationManager manager;

@@ -31,7 +31,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(rq -> {
-                    rq.requestMatchers(HttpMethod.POST, "/login").permitAll();
+                    rq.requestMatchers(HttpMethod.POST, "/api/login").permitAll();
                     rq.requestMatchers("/api/dashboard-admin").hasAnyRole("ADMIN");
                     rq.requestMatchers("/api/clientes/**").hasAnyRole("ADMIN", "EMPLEADO");
                     rq.requestMatchers("/api/usuarios/**").hasAnyRole("ADMIN");
