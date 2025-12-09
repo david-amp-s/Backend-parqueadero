@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/espacios")
@@ -30,8 +31,13 @@ public class EspacioController {
         return espacioService.crearEspacio(dto);
     }
 
+    @GetMapping()
+    List<EspacioDto> espaciosOcupados() {
+        return espacioService.espaciosOcupados();
+    }
+
     @GetMapping("/{vehiculo}")
-    public List<Espacio> espaciosDisponibles(@PathVariable String vehiculo) {
+    public List<EspacioDto> espaciosDisponibles(@PathVariable String vehiculo) {
         return espacioService.espaciosDisponibles(vehiculo);
     }
 

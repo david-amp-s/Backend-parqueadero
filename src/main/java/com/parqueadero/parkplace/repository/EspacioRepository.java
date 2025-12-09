@@ -23,4 +23,5 @@ public interface EspacioRepository extends JpaRepository<Espacio, Long> {
 
         Integer countByTipoEspacio(EstadoEspacio tipoEspacio);
 
+        List<Espacio> findByTipoEspacio(EstadoEspacio espacio);
 }

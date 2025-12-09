@@ -11,9 +11,11 @@ public interface EspacioService {
 
     EspacioDto crearEspacio(EspacioCreateDto dto);
 
-    List<Espacio> espaciosDisponibles(String vehiculo);
+    List<EspacioDto> espaciosDisponibles(String vehiculo);
 
     EspacioDto asignarEspacio(String vehiculo);
 
-    public EspacioDto liberarEspacio(String codigo);
+    EspacioDto liberarEspacio(String codigo);
+
+    List<EspacioDto> espaciosOcupados();
 }

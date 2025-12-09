@@ -33,16 +33,19 @@ public class EspacioServiceImpl implements EspacioService {
                 .tipoVehiculoEnt(tipoVehiculoEnt)
                 .build();
         espacioRepository.save(espacio);
-        return new EspacioDto(espacio.getId(), espacio.getCodigo(), espacio.getTipoEspacio(),
-                espacio.getTipoVehiculoEnt());
+        return new EspacioDto(espacio.getId(), espacio.getCodigo(), espacio.getTipoEspacio().name(),
+                espacio.getTipoVehiculoEnt().getTipo());
     }
 
     @Override
-    public List<Espacio> espaciosDisponibles(String vehiculo) {
+    public List<EspacioDto> espaciosDisponibles(String vehiculo) {
         TipoVehiculoEnt tipoVehiculoEnt = tipoVehiculoEntRepository.findByTipo(vehiculo.toUpperCase())
                 .orElseThrow(() -> new TipoVehiculoException());
         return espacioRepository.findByTipoEspacioAndTipoVehiculoEntOrderByIdAsc(EstadoEspacio.DISPONIBLE,
-                tipoVehiculoEnt);
+                tipoVehiculoEnt).stream()
+                .map(e -> new EspacioDto(e.getId(), e.getCodigo(), e.getTipoEspacio().name(),
+                        e.getTipoVehiculoEnt().getTipo()))
+                .toList();
     }
 
     @Override
@@ -56,7 +59,7 @@ public class EspacioServiceImpl implements EspacioService {
             espacioAsignado.setTipoEspacio(EstadoEspacio.OCUPADO);
             espacioRepository.save(espacioAsignado);
             return new EspacioDto(espacioAsignado.getId(), espacioAsignado.getCodigo(),
-                    espacioAsignado.getTipoEspacio(), espacioAsignado.getTipoVehiculoEnt());
+                    espacioAsignado.getTipoEspacio().name(), espacioAsignado.getTipoVehiculoEnt().getTipo());
         } else {
             throw new RuntimeException("No hay espacios disponibles");
         }
@@ -69,11 +72,19 @@ public class EspacioServiceImpl implements EspacioService {
         if (espacio.getTipoEspacio() == EstadoEspacio.OCUPADO) {
             espacio.setTipoEspacio(EstadoEspacio.DISPONIBLE);
             espacioRepository.save(espacio);
-            return new EspacioDto(espacio.getId(), espacio.getCodigo(), espacio.getTipoEspacio(),
-                    espacio.getTipoVehiculoEnt());
+            return new EspacioDto(espacio.getId(), espacio.getCodigo(), espacio.getTipoEspacio().name(),
+                    espacio.getTipoVehiculoEnt().getTipo());
         } else {
             throw new RuntimeException("El espacio no se encuentra ocupado");
         }
+    }
+
+    @Override
+    public List<EspacioDto> espaciosOcupados() {
+        return espacioRepository.findByTipoEspacio(EstadoEspacio.OCUPADO).stream()
+                .map(e -> new EspacioDto(e.getId(), e.getCodigo(), e.getTipoEspacio().name(),
+                        e.getTipoVehiculoEnt().getTipo()))
+                .toList();
     }
 
 }
