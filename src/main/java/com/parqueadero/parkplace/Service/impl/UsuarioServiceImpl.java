@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.parqueadero.parkplace.Service.UsuarioService;
+import com.parqueadero.parkplace.dto.InfoClienteDto;
 import com.parqueadero.parkplace.dto.UsuarioCreateDto;
 import com.parqueadero.parkplace.dto.UsuarioDto;
 import com.parqueadero.parkplace.exception.RolNoEncontrado;

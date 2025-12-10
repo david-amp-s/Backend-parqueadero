@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.parqueadero.parkplace.Service.ClienteService;
 import com.parqueadero.parkplace.dto.ClienteCreateDto;
 import com.parqueadero.parkplace.dto.ClienteDto;
+import com.parqueadero.parkplace.dto.InfoClienteDto;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,11 @@ public class ClienteController {
     @GetMapping("/{cedula}")
     public ClienteDto buscarCliente(@PathVariable String cedula) {
         return clienteService.buscar(cedula);
+    }
+
+    @GetMapping("/info")
+    InfoClienteDto infoClientes() {
+        return clienteService.infoClientes();
     }
 
     @GetMapping

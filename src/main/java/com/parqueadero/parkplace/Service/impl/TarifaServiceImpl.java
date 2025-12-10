@@ -37,7 +37,8 @@ public class TarifaServiceImpl implements TarifaService {
                                 .orElseThrow(() -> new TarifaNoEncontradException());
                 tarifa.setValorMinuto(dto.valorMinuto());
                 tarifaRepository.save(tarifa);
-                return new TarifaDto(tarifa.getId(), tarifa.getTipoVehiculoEnt(), tarifa.getTipoCliente().getNombre(),
+                return new TarifaDto(tarifa.getId(), tarifa.getTipoVehiculoEnt().getTipo(),
+                                tarifa.getTipoCliente().getNombre(),
                                 tarifa.getValorMinuto());
         }
 
@@ -51,7 +52,8 @@ public class TarifaServiceImpl implements TarifaService {
                                 .orElseThrow(() -> new TarifaNoEncontradException());
                 tarifa.setValorTarifaFija(dto.valorTarifaFija());
                 tarifaRepository.save(tarifa);
-                return new TarifaDto(tarifa.getId(), tarifa.getTipoVehiculoEnt(), tarifa.getTipoCliente().getNombre(),
+                return new TarifaDto(tarifa.getId(), tarifa.getTipoVehiculoEnt().getTipo(),
+                                tarifa.getTipoCliente().getNombre(),
                                 tarifa.getValorMinuto());
         }
 
@@ -71,7 +73,8 @@ public class TarifaServiceImpl implements TarifaService {
                 tarifa.setValorMinuto(dto.valorMinuto());
                 tarifa.setValorTarifaFija(dto.valorTarifaFija());
                 tarifaRepository.save(tarifa);
-                return new TarifaDto(tarifa.getId(), tarifa.getTipoVehiculoEnt(), tarifa.getTipoCliente().getNombre(),
+                return new TarifaDto(tarifa.getId(), tarifa.getTipoVehiculoEnt().getTipo(),
+                                tarifa.getTipoCliente().getNombre(),
                                 tarifa.getValorMinuto());
         }
 
@@ -79,7 +82,7 @@ public class TarifaServiceImpl implements TarifaService {
         public List<TarifaDto> obtenerTodasLasTarifas() {
                 List<Tarifa> tarifas = tarifaRepository.findAll();
                 return tarifas.stream()
-                                .map(tarifa -> new TarifaDto(tarifa.getId(), tarifa.getTipoVehiculoEnt(),
+                                .map(tarifa -> new TarifaDto(tarifa.getId(), tarifa.getTipoVehiculoEnt().getTipo(),
                                                 tarifa.getTipoCliente().getNombre(),
                                                 tarifa.getValorMinuto()))
                                 .toList();

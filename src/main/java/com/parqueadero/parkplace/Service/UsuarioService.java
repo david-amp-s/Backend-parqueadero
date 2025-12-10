@@ -2,6 +2,7 @@ package com.parqueadero.parkplace.Service;
 
 import java.util.List;
 
+import com.parqueadero.parkplace.dto.InfoClienteDto;
 import com.parqueadero.parkplace.dto.UsuarioCreateDto;
 import com.parqueadero.parkplace.dto.UsuarioDto;
 

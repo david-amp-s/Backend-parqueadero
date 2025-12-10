@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.parqueadero.parkplace.Service.ClienteService;
 import com.parqueadero.parkplace.dto.ClienteCreateDto;
 import com.parqueadero.parkplace.dto.ClienteDto;
+import com.parqueadero.parkplace.dto.InfoClienteDto;
 import com.parqueadero.parkplace.exception.ClienteNoEncontradoException;
 import com.parqueadero.parkplace.exception.TipoClienteNoEncontradoException;
 import com.parqueadero.parkplace.model.Cliente;
@@ -83,5 +84,13 @@ public class ClienteServiceImpl implements ClienteService {
                         throw new RuntimeException("El cliente no existe");
                 }
                 clienteRepository.deleteByCedula(cedula);
+        }
+
+        @Override
+        public InfoClienteDto infoClientes() {
+                Integer estudiantes = clienteRepository.countByTipo("ESTUDIANTE");
+                Integer clientes = clienteRepository.countByTipo("CLIENTE");
+                Integer totalClientes = clienteRepository.totalClientes();
+                return new InfoClienteDto(totalClientes, estudiantes, clientes);
         }
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.parqueadero.parkplace.dto.ClienteCreateDto;
 import com.parqueadero.parkplace.dto.ClienteDto;
+import com.parqueadero.parkplace.dto.InfoClienteDto;
 
 public interface ClienteService {
 
@@ -16,4 +17,6 @@ public interface ClienteService {
     ClienteDto actualizar(String cedula, ClienteCreateDto dto);
 
     void eliminar(String cedula);
+
+    InfoClienteDto infoClientes();
 }
