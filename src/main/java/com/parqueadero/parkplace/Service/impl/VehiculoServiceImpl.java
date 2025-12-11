@@ -36,7 +36,7 @@ public class VehiculoServiceImpl implements VehiculoService {
                 return new VehiculoDto(
                                 vehiculo.getId(),
                                 vehiculo.getPlaca(),
-                                vehiculo.getTipoVehiculoEnt(),
+                                vehiculo.getTipoVehiculoEnt().getTipo(),
                                 convertorClienteResponsive(vehiculo.getCliente()));
         }
 
@@ -79,7 +79,7 @@ public class VehiculoServiceImpl implements VehiculoService {
         public VehiculoDto buscarPorId(Long id) {
                 Vehiculo vehiculo = vehiculoRepository.findById(id)
                                 .orElseThrow(() -> new VehiculoNoEncontrado());
-                return new VehiculoDto(vehiculo.getId(), vehiculo.getPlaca(), vehiculo.getTipoVehiculoEnt(),
+                return new VehiculoDto(vehiculo.getId(), vehiculo.getPlaca(), vehiculo.getTipoVehiculoEnt().getTipo(),
                                 convertorClienteResponsive(vehiculo.getCliente()));
         }
 
@@ -87,7 +87,7 @@ public class VehiculoServiceImpl implements VehiculoService {
         public VehiculoDto buscarPorPlaca(String placa) {
                 Vehiculo vehiculo = vehiculoRepository.findByPlaca(placa)
                                 .orElseThrow(() -> new VehiculoNoEncontrado());
-                return new VehiculoDto(vehiculo.getId(), vehiculo.getPlaca(), vehiculo.getTipoVehiculoEnt(),
+                return new VehiculoDto(vehiculo.getId(), vehiculo.getPlaca(), vehiculo.getTipoVehiculoEnt().getTipo(),
                                 convertorClienteResponsive(vehiculo.getCliente()));
         }
 
