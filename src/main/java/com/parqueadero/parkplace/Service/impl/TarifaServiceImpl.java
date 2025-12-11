@@ -10,7 +10,6 @@ import com.parqueadero.parkplace.dto.TarifaDto;
 import com.parqueadero.parkplace.exception.TarifaNoEncontradException;
 import com.parqueadero.parkplace.exception.TipoClienteNoEncontradoException;
 import com.parqueadero.parkplace.exception.TipoVehiculoException;
-import com.parqueadero.parkplace.exception.TipoVehiculoNoRegistrado;
 import com.parqueadero.parkplace.model.Tarifa;
 import com.parqueadero.parkplace.model.TipoCliente;
 import com.parqueadero.parkplace.model.TipoVehiculoEnt;
@@ -39,7 +38,7 @@ public class TarifaServiceImpl implements TarifaService {
                 tarifaRepository.save(tarifa);
                 return new TarifaDto(tarifa.getId(), tarifa.getTipoVehiculoEnt().getTipo(),
                                 tarifa.getTipoCliente().getNombre(),
-                                tarifa.getValorMinuto());
+                                tarifa.getValorMinuto(), tarifa.getValorTarifaFija());
         }
 
         @Override
@@ -54,7 +53,7 @@ public class TarifaServiceImpl implements TarifaService {
                 tarifaRepository.save(tarifa);
                 return new TarifaDto(tarifa.getId(), tarifa.getTipoVehiculoEnt().getTipo(),
                                 tarifa.getTipoCliente().getNombre(),
-                                tarifa.getValorMinuto());
+                                tarifa.getValorMinuto(), tarifa.getValorTarifaFija());
         }
 
         @Override
@@ -75,16 +74,16 @@ public class TarifaServiceImpl implements TarifaService {
                 tarifaRepository.save(tarifa);
                 return new TarifaDto(tarifa.getId(), tarifa.getTipoVehiculoEnt().getTipo(),
                                 tarifa.getTipoCliente().getNombre(),
-                                tarifa.getValorMinuto());
+                                tarifa.getValorMinuto(), tarifa.getValorTarifaFija());
         }
 
         @Override
         public List<TarifaDto> obtenerTodasLasTarifas() {
                 List<Tarifa> tarifas = tarifaRepository.findAll();
                 return tarifas.stream()
-                                .map(tarifa -> new TarifaDto(tarifa.getId(), tarifa.getTipoVehiculoEnt().getTipo(),
-                                                tarifa.getTipoCliente().getNombre(),
-                                                tarifa.getValorMinuto()))
+                                .map(t -> new TarifaDto(t.getId(), t.getTipoVehiculoEnt().getTipo(),
+                                                t.getTipoCliente().getNombre(), t.getValorMinuto(),
+                                                t.getValorTarifaFija()))
                                 .toList();
         }
 

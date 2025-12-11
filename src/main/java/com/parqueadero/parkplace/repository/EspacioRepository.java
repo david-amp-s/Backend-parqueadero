@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.parqueadero.parkplace.enums.EstadoEspacio;
 import com.parqueadero.parkplace.model.Espacio;
@@ -24,4 +25,8 @@ public interface EspacioRepository extends JpaRepository<Espacio, Long> {
         Integer countByTipoEspacio(EstadoEspacio tipoEspacio);
 
         List<Espacio> findByTipoEspacio(EstadoEspacio espacio);
+
+        @Query("SELECT (COUNT(v)*100.0 / (SELECT COUNT(e) FROM Espacio e)) FROM Vehiculo v WHERE v.ingreso = true AND v.salida = false")
+Double tasaOcupacion();
+
 }

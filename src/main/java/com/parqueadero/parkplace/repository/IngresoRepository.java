@@ -1,6 +1,7 @@
 package com.parqueadero.parkplace.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.parqueadero.parkplace.model.Ingreso;
 import com.parqueadero.parkplace.model.Vehiculo;
@@ -15,4 +16,7 @@ public interface IngresoRepository extends JpaRepository<Ingreso, Long> {
     List<Ingreso> findByVehiculo_Placa(String placa);
 
     Optional<Ingreso> findFirstByVehiculoOrderByFechaIngresoDesc(Vehiculo vehiculo);
+
+    List<Ingreso> findTop10ByOrderByFechaIngresoDesc();
+
 }

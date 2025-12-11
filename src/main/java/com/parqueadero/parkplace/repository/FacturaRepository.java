@@ -25,7 +25,10 @@ public interface FacturaRepository extends JpaRepository<Factura, Long> {
     @Query(value = "SELECT COALESCE(SUM(f.total), 0) FROM facturas f WHERE EXTRACT(YEAR FROM f.fecha) = EXTRACT(YEAR FROM CURRENT_DATE) AND EXTRACT(MONTH FROM f.fecha) = EXTRACT(MONTH FROM CURRENT_DATE)", nativeQuery = true)
     BigDecimal obtenerTotalMensual();
 
-    @Query(value = "SELECT COALESCE(SUM(f.total), 0) FROM facturas f WHERE EXTRACT(YEAR FROM f.fecha) = EXTRACT(YEAR FROM CURRENT_DATE)", nativeQuery = true)
-    BigDecimal obtenerTotalAnual();
+    @Query(value = "SELECT COALESCE(SUM(f.total), 0) " +
+            "FROM facturas f " +
+            "WHERE EXTRACT(WEEK FROM f.fecha) = EXTRACT(WEEK FROM CURRENT_DATE) " +
+            "AND EXTRACT(YEAR FROM f.fecha) = EXTRACT(YEAR FROM CURRENT_DATE)", nativeQuery = true)
+    BigDecimal obtenerTotalSemanal();
 
 }
