@@ -13,6 +13,8 @@ public interface UsuarioService {
 
     UsuarioDto buscar(String correo);
 
-    UsuarioDto modificar(String correo, UsuarioCreateDto dto);
+    UsuarioDto modificar(Long id, UsuarioCreateDto dto);
+
+    void eliminarUsuario(Long id);
 
 }

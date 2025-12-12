@@ -14,9 +14,9 @@ public interface ClienteService {
 
     ClienteDto buscar(String cedula);
 
-    ClienteDto actualizar(String cedula, ClienteCreateDto dto);
+    ClienteDto actualizar(Long id, ClienteCreateDto dto);
 
-    void eliminar(String cedula);
+    void eliminar(Long id);
 
     InfoClienteDto infoClientes();
 }

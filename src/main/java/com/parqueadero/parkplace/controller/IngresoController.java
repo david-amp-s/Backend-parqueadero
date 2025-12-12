@@ -54,4 +54,9 @@ public class IngresoController {
     public List<IngresoDto> buscarPorPlaca(@RequestBody String placa) {
         return ingresoService.buscarPorPlaca(placa);
     }
+
+    @GetMapping("/ocupados")
+    public List<IngresoDto> espaciosOcupados(){
+        return ingresoService.espaciosOcupados();
+    }
 }

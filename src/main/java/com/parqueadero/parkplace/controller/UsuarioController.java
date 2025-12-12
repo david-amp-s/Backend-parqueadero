@@ -2,8 +2,7 @@ package com.parqueadero.parkplace.controller;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.parqueadero.parkplace.Service.UsuarioService;
 import com.parqueadero.parkplace.dto.UsuarioCreateDto;
@@ -11,11 +10,6 @@ import com.parqueadero.parkplace.dto.UsuarioDto;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -33,9 +27,13 @@ public class UsuarioController {
         return usuarioService.listar();
     }
 
-    @PutMapping("/{correo}")
-    public UsuarioDto modificar(@PathVariable String correo, @RequestBody @Valid UsuarioCreateDto dto) {
-        return usuarioService.modificar(correo, dto);
+    @PutMapping("/{id}")
+    public UsuarioDto modificar(@PathVariable Long id, @RequestBody @Valid UsuarioCreateDto dto) {
+        return usuarioService.modificar(id, dto);
     }
 
+    @DeleteMapping("/{id}")
+    void eliminarUsuario(@PathVariable Long id){
+        usuarioService.eliminarUsuario(id);
+    }
 }

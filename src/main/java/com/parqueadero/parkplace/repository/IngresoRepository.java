@@ -1,5 +1,6 @@
 package com.parqueadero.parkplace.repository;
 
+import com.parqueadero.parkplace.model.Espacio;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -18,5 +19,20 @@ public interface IngresoRepository extends JpaRepository<Ingreso, Long> {
     Optional<Ingreso> findFirstByVehiculoOrderByFechaIngresoDesc(Vehiculo vehiculo);
 
     List<Ingreso> findTop10ByOrderByFechaIngresoDesc();
+
+    @Query("SELECT i " +
+            "FROM Ingreso i " +
+            "WHERE i.vehiculo.ingreso = true " +
+            "AND i.fechaIngreso = (" +
+            "    SELECT MAX(i2.fechaIngreso) " +
+            "    FROM Ingreso i2 " +
+            "    WHERE i2.vehiculo.id = i.vehiculo.id" +
+            ")")
+    List<Ingreso> findIngresosOcupados();
+
+
+
+
+
 
 }

@@ -65,10 +65,9 @@ public class ClienteServiceImpl implements ClienteService {
         }
 
         @Override
-        public ClienteDto actualizar(String cedula, ClienteCreateDto dto) {
+        public ClienteDto actualizar(Long id, ClienteCreateDto dto) {
                 TipoCliente tipoCliente = buscarTipoCliente(dto.tipoCliente());
-                Cliente cliente = clienteRepository.findByCedula(cedula)
-                                .orElseThrow(() -> new ClienteNoEncontradoException(cedula));
+                Cliente cliente = clienteRepository.findById(id).orElseThrow();
                 cliente.setNombre(dto.nombre());
                 cliente.setCedula(dto.cedula());
                 cliente.setCorreo(dto.correo());
@@ -79,11 +78,11 @@ public class ClienteServiceImpl implements ClienteService {
         }
 
         @Override
-        public void eliminar(String cedula) {
-                if (!clienteRepository.existsByCedula(cedula)) {
+        public void eliminar(Long id) {
+                if (!clienteRepository.existsById(id)) {
                         throw new RuntimeException("El cliente no existe");
                 }
-                clienteRepository.deleteByCedula(cedula);
+                clienteRepository.deleteById(id);
         }
 
         @Override

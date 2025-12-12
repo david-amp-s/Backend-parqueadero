@@ -92,13 +92,18 @@ public class VehiculoServiceImpl implements VehiculoService {
         }
 
         @Override
-        public VehiculoDto corregirVehiculo(String placa, VehiculoCreateDto dto) {
+        public VehiculoDto corregirVehiculo(Long id, VehiculoCreateDto dto) {
+                Cliente cliente;
                 TipoVehiculoEnt tipoVehiculo = tipoVehiculoEntRepository.findByTipo(dto.tipoVehiculo())
                                 .orElseThrow(() -> new TipoVehiculoException());
-                Vehiculo vehiculo = vehiculoRepository.findByPlaca(placa)
-                                .orElseThrow(() -> new VehiculoNoEncontrado());
-                Cliente cliente = clienteRepository.findByCedula(dto.cedula())
-                                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+                Vehiculo vehiculo = vehiculoRepository.findById(id).orElseThrow();
+                if (dto.cedula().isBlank()) {
+                        cliente = clienteRepository.findByNombre("INVITADO")
+                                .orElseThrow(() -> new ClienteNoEncontradoException("Invitado no registrado"));
+                } else {
+                        cliente = clienteRepository.findByCedula(dto.cedula())
+                                .orElseThrow(() -> new ClienteNoEncontradoException("Cliente no encontrado"));
+                }
                 vehiculo.setPlaca(dto.placa());
                 vehiculo.setTipoVehiculoEnt(tipoVehiculo);
                 vehiculo.setCliente(cliente);
@@ -107,10 +112,10 @@ public class VehiculoServiceImpl implements VehiculoService {
         }
 
         @Override
-        public void eliminarVehiculo(String placa) {
-                if (!vehiculoRepository.existsByPlaca(placa)) {
+        public void eliminarVehiculo(Long id) {
+                if (!vehiculoRepository.existsById(id)) {
                         throw new VehiculoNoEncontrado();
                 }
-                vehiculoRepository.deleteByPlaca(placa);
+                vehiculoRepository.deleteById(id);
         }
 }

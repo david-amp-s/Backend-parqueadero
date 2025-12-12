@@ -19,4 +19,5 @@ public interface IngresoService {
 
     List<IngresoDto> buscarPorPlaca(String placa);
 
+    List<IngresoDto> espaciosOcupados();
 }

@@ -66,14 +66,22 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public UsuarioDto modificar(String correo, UsuarioCreateDto dto) {
-        Usuario usuario = usuarioRepository.findByEmail(correo)
-                .orElseThrow(() -> new UsuarioNoEncontrado());
+    public UsuarioDto modificar(Long id, UsuarioCreateDto dto) {
+        Usuario usuario = usuarioRepository.findById(id).orElseThrow();
         usuario.setNombre(dto.nombre());
-        usuario.setContraseña(dto.contraseña());
+        usuario.setContraseña(passwordEncoder.encode(dto.contraseña()));
         usuario.setRol(obtenerRol(dto.rolNombre()));
         usuarioRepository.save(usuario);
         return convertirDto(usuario);
+    }
+
+    @Override
+    public void eliminarUsuario(Long id) {
+        if (! usuarioRepository.existsById(id)){
+            throw new RuntimeException("El usuario no existe");
+        }
+        Usuario usuario = usuarioRepository.findById(id).orElseThrow();
+        usuarioRepository.delete(usuario);
     }
 
 }

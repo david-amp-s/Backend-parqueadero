@@ -14,7 +14,7 @@ public interface VehiculoService {
 
     VehiculoDto buscarPorId(Long id);
 
-    VehiculoDto corregirVehiculo(String placa, VehiculoCreateDto dto);
+    VehiculoDto corregirVehiculo(Long id, VehiculoCreateDto dto);
 
-    void eliminarVehiculo(String placa);
+    void eliminarVehiculo(Long id);
 }

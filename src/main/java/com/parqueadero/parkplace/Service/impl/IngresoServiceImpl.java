@@ -101,4 +101,9 @@ public class IngresoServiceImpl implements IngresoService {
         return ingresoRepository.findByVehiculo_Placa(placa).stream().map(p -> conversorDto(p)).toList();
     }
 
+    @Override
+    public List<IngresoDto> espaciosOcupados() {
+        return ingresoRepository.findIngresosOcupados().stream().map(i -> conversorDto(i)).toList();
+    }
+
 }
